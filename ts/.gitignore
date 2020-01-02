@@ -1,0 +1,17 @@
+bower_components
+node_modules
+bower
+test/temp
+.sass-cache
+.tmp
+.log
+.vscode
+test/bower_components/
+__ConfigTemp
+dist
+.DS_Store
+assets/bundle/
+assets/.sass-cache
+app/distviews
+.idea
+app/echarts/options/
