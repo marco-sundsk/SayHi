@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>Connecting to the NEAR platform</title>
+        <!-- to connect to the NEAR platform, include a reference to nearlib -->
+        <script src="https://cdn.jsdelivr.net/npm/nearlib/dist/nearlib.min.js"></script>
+    </head>
+    <body>
+        <button id="sign-in-button">sign-in-button</button>
+        <button id="sign-out-button">sign-out-button</button>
+        <script>
+            // configure minimal network settings and key storage
+            const CONTRACT_NAME = 'nearapp1';
+            const config = {
+                nodeUrl: "https://rpc.nearprotocol.com",
+                deps: {
+                    keyStore: new nearlib.keyStores.BrowserLocalStorageKeyStore()
+                },
+                networkId: 'default',
+                contractName: CONTRACT_NAME,
+                walletUrl: 'https://wallet.cn.nearprotocol.com',
+            };
+
+            // Using initialized contract
+            async function doWork() {
+                // Based on whether you've authorized, checking which flow we should go.
+                if (!window.walletAccount.isSignedIn()) {
+                    console.log("out");
+                    signedOutFlow();
+                } else {
+                    console.log("in");
+                    signedInFlow();
+                }
+            }
+
+            // Function that initializes the signIn button using WalletAccount
+            function signedOutFlow() {
+                // Displaying the signed out flow container.
+
+                // Adding an event to a sing-in button.
+                document
+                    .getElementById("sign-in-button")
+                    .addEventListener("click", () => {
+                        window.walletAccount.requestSignIn(
+                            // The contract name that would be authorized to be called by the user's account.
+                            config.contractName,
+                            // This is the app name. It can be anything.
+                            "Welcome to NEAR"
+                        );
+                    });
+            }
+
+            // Main function for the signed-in flow (already authorized by the wallet).
+            function signedInFlow() {
+                document
+                    .getElementById("sign-out-button")
+                    .addEventListener("click", () => {
+                        walletAccount.signOut();
+                        // Forcing redirect.
+                        window.location.replace(
+                            window.location.origin + window.location.pathname
+                        );
+                    });
+            }
+
+            // open a connection to the NEAR platform
+            (async function() {
+                window.near = await nearlib.connect(config);
+                window.walletAccount = new nearlib.WalletAccount(window.near);
+                window.accountId = window.walletAccount.getAccountId();
+                
+                doWork();
+            })(window);
+        </script>
+    </body>
+</html>
