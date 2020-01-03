@@ -25,27 +25,36 @@ function printString(s: string): string {
 /**
  * 创建模板
  * @param accountId 模板创建者
- * @param templateName 模板名称
- * @param templateContent 模板内容
- * @param duration
+ * @param templateInfo 模板信息
  */
 export function createTemplate(
     accountId: string,
-    templateName: string,
-    templateContent: string,
-    duration: string = "0"
+    templateInfo: string
 ): boolean {
-	let template = new TemplateModel();
-	template.id = math.hash32(math.randomSeed()); // TODO 此处应该有随机生成编号
-    template.name = templateName;
-    template.content = templateContent;
-    template.duration = duration;
-    storage.setBytes(accountId, template.encode());
-	
+    if (isBlank(accountId) || isBlank(templateInfo)) {
+        return false;
+    }
+
+    storage.setString(accountId + "_templates", templateInfo);
     return true;
 }
 
-export function updateTemplate(accountId: string): string {
-	return "";
-	// return TemplateModel.decode(storage.getBytes(accountId));
+/**
+ * 查询创建的模板
+ * @param accountId 目标用户
+ */
+export function listTemplate(accountId: string): string {
+    return storage.getString(accountId + "_templates")!;
+}
+
+/**
+ * 判断字符串是否为空
+ * @param str 目标字符串
+ */
+function isBlank(str: string): boolean {
+    if (str == null || str.trim().length < 1) {
+        return true;
+    }
+
+    return false;
 }
