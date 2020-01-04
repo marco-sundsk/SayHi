@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no"
+    />
+    <title>NEAR名片</title>
+    <link href="./assets/css/reset.css" rel="stylesheet" type="text/css" />
+    <link href="./assets/css/mycard.css" rel="stylesheet" type="text/css" />
+    <link href="./assets/css/swiper.min.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body>
+    <div class="send-card-form">
+      <div class="send-title">
+        <h4>填写信息</h4>
+        <img src="./assets/images/close_other.png" class="close" />
+      </div>
+      <div class="form-wrap">
+        <div class="one-form">
+          <img src="./assets/images/card_name.png" />
+          <input type="text" placeholder="卡片名称" />
+        </div>
+        <div class="one-form">
+          <img src="./assets/images/public_info.png" />
+          <input type="text" placeholder="公开信息" />
+        </div>
+        <div class="one-form">
+          <img src="./assets/images/private_info.png" />
+          <input type="text" placeholder="私密信息(选填)" />
+        </div>
+        <div class="one-form">
+          <img src="./assets/images/card_number.png" />
+          <input type="text" placeholder="卡片数量" />
+        </div>
+        <div class="one-form">
+          <img src="./assets/images/red.png" />
+          <select>
+            <option>选择红包类型</option>
+            <option>平均分配红包</option>
+            <option>随机红包</option>
+          </select>
+        </div>
+        <div class="one-form">
+          <img src="./assets/images/amount.png" />
+          <input type="text" placeholder="金额" />
+        </div>
+        <div class="one-form">
+          <img src="./assets/images/card_time.png" />
+          <select>
+            <option>选择过期时间</option>
+            <option>100000</option>
+            <option>2000000</option>
+            <option>5000000</option>
+          </select>
+        </div>
+      </div>
+      <img src="./assets/images/send_user.png" class="send-btn" />
+    </div>
+    <div class="index-top-bg"></div>
+    <div class="index-content">
+      <div class="user-wrap">
+        <div class="user-img">
+          <img src="./assets/images/userimg.png" class="userImg" />
+          <div class="user-name">dusa sss</div>
+        </div>
+        <img src="./assets/images/add.png" class="add-icon" />
+      </div>
+      <div class="my-contacts">
+        我的联系人 <img src="./assets/images/right.png" class="right" />
+      </div>
+      <div class="all-card">
+        <div class="title">我的卡片</div>
+        <div class="card-container">
+          <div class="swiper-wrapper">
+            <div class="swiper-slide">
+              <div class="card-name">俯瞰名片</div>
+              <div class="id">DCsss ssdas</div>
+              <div class="card-info">
+                <img src="./assets/images/card_number.png" />公开信息
+              </div>
+              <div class="card-info">
+                <img src="./assets/images/card_name.png" />私密信息
+              </div>
+              <div class="red-bag">
+                <img src="./assets/images/red2.png" />600.00
+              </div>
+            </div>
+            <div class="swiper-slide">
+              <div class="card-name">俯瞰名片</div>
+              <div class="id">DCsss ssdas</div>
+              <div class="card-info">
+                <img src="./assets/images/card_number.png" />公开信息
+              </div>
+              <div class="card-info">
+                <img src="./assets/images/card_name.png" />私密信息
+              </div>
+              <div class="red-bag">
+                <img src="./assets/images/red2.png" />600.00
+              </div>
+            </div>
+            <div class="swiper-slide">
+              <div class="card-name">俯瞰名片</div>
+              <div class="id">DCsss ssdas</div>
+              <div class="card-info">
+                <img src="./assets/images/card_number.png" />公开信息
+              </div>
+              <div class="card-info">
+                <img src="./assets/images/card_name.png" />私密信息
+              </div>
+              <div class="red-bag">
+                <img src="./assets/images/red2.png" />600.00
+              </div>
+            </div>
+            <div class="swiper-slide">
+              <div class="card-name">俯瞰名片</div>
+              <div class="id">DCsss ssdas</div>
+              <div class="card-info">
+                <img src="./assets/images/card_number.png" />公开信息
+              </div>
+              <div class="card-info">
+                <img src="./assets/images/card_name.png" />私密信息
+              </div>
+              <div class="red-bag">
+                <img src="./assets/images/red2.png" />600.00
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/gh/nearprotocol/nearlib@0.19.1/dist/nearlib.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+    <script src="./assets/js/jquery.js"></script>
+    <script src="./assets/js/swiper.min.js"></script>
+    <script src="./config.js"></script>
+    <script src="./main.js"></script>
+    <script>
+      $(document).ready(() => {
+        var swiper = new Swiper(".card-container", {
+          slidesPerView: 1.6,
+          spaceBetween: 0,
+          centeredSlides: true,
+          loop: false
+        });
+        $(".add-icon").click(() => {
+          $(".send-card-form").show(0, () => {
+            $(".send-card-form").css({
+              transform: "translateY(0vh)"
+            });
+          });
+        });
+
+        $(".close").click(() => {
+          setTimeout(() => {
+            $(".send-card-form").hide();
+          }, 500);
+          $(".send-card-form").css({
+            transform: "translateY(76vh)"
+          });
+        });
+
+        $(".my-contacts").click(() => {
+          location.href = "./mycontacts.html";
+        });
+      });
+    </script>
+  </body>
+</html>

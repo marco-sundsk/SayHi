@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no"
+    />
+    <title>NEAR名片</title>
+    <link href="./assets/css/reset.css" rel="stylesheet" type="text/css" />
+    <link href="./assets/css/carddetail.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body>
+    <div class="card-detail-wrapper">
+      <div class="back">
+        <img src="./assets/images/back.png" />
+      </div>
+      <div class="content">
+        <div class="title">俯瞰名片</div>
+        <div class="name">DaSao Xu</div>
+        <div class="info">
+          <img src="./assets/images/public.png" />
+          <span>公开信息</span>
+        </div>
+        <div class="info">
+          <img src="./assets/images/private_icon.png" />
+          <span>私密信息</span>
+        </div>
+        <div class="red-bag"><img src="./assets/images/red2.png" />600.00</div>
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/gh/nearprotocol/nearlib@0.19.1/dist/nearlib.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+    <script src="./assets/js/jquery.js"></script>
+    <script src="./config.js"></script>
+    <script src="./main.js"></script>
+    <script>
+      $(document).ready(() => {
+        $(".back").click(() => {
+          history.back();
+        });
+      });
+    </script>
+  </body>
+</html>

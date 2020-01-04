@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no"
+    />
+    <title>NEAR名片</title>
+    <link href="./assets/css/reset.css" rel="stylesheet" type="text/css" />
+    <link href="./assets/css/mycontacts.css" rel="stylesheet" type="text/css" />
+    <link href="./assets/css/swiper.min.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body>
+    <div class="send-card-form">
+      <div class="send-title">
+        <h4>发送给：DaSao Xu</h4>
+        <img src="./assets/images/close_other.png" class="close" />
+      </div>
+      <div class="form-wrap">
+        <div class="one-form">
+          <img src="./assets/images/card_name.png" />
+          <input type="text" placeholder="卡片名称" />
+        </div>
+        <div class="one-form">
+          <img src="./assets/images/public_info.png" />
+          <input type="text" placeholder="公开信息" />
+        </div>
+        <div class="one-form">
+          <img src="./assets/images/private_info.png" />
+          <input type="text" placeholder="私密信息(选填)" />
+        </div>
+        <div class="one-form">
+          <img src="./assets/images/amount.png" />
+          <input type="text" placeholder="金额" />
+        </div>
+        <div class="one-form">
+          <img src="./assets/images/card_time.png" />
+          <select>
+            <option>选择过期时间</option>
+            <option>100000</option>
+            <option>2000000</option>
+            <option>5000000</option>
+          </select>
+        </div>
+      </div>
+      <img src="./assets/images/check.png" class="send-btn" />
+    </div>
+    <div class="mycontacts-warpper">
+      <div class="back">
+        <img src="./assets/images/back_w.png" />
+      </div>
+      <div class="mycontacts-titile">
+        我的联系人
+      </div>
+      <div class="list-wrapper">
+        <div class="one-contacts">
+          <img src="./assets/images/userimg.png" class="user-img" />
+          <img src="./assets/images/send_user.png" class="contacts-send-btn" />
+          <div class="id">DaSao Xu</div>
+          <div class="desc">高级客户经理</div>
+          <div class="bottom">
+            <div class="left">
+              <div class="tit">收到的卡</div>
+              <div class="info">12</div>
+            </div>
+            <div class="right">
+              <div class="tit">到期时间</div>
+              <div class="info">12321</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="one-contacts">
+          <img src="./assets/images/userimg.png" class="user-img" />
+          <img src="./assets/images/send_user.png" class="contacts-send-btn" />
+          <div class="id">DaSao Xu</div>
+          <div class="desc">高级客户经理</div>
+          <div class="bottom">
+            <div class="left">
+              <div class="tit">收到的卡</div>
+              <div class="info">12</div>
+            </div>
+            <div class="right">
+              <div class="tit">到期时间</div>
+              <div class="info">12321</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="one-contacts">
+          <img src="./assets/images/userimg.png" class="user-img" />
+          <img src="./assets/images/send_user.png" class="contacts-send-btn" />
+          <div class="id">DaSao Xu</div>
+          <div class="desc">高级客户经理</div>
+          <div class="bottom">
+            <div class="left">
+              <div class="tit">收到的卡</div>
+              <div class="info">12</div>
+            </div>
+            <div class="right">
+              <div class="tit">到期时间</div>
+              <div class="info">12321</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/gh/nearprotocol/nearlib@0.19.1/dist/nearlib.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+    <script src="./assets/js/jquery.js"></script>
+    <script src="./assets/js/swiper.min.js"></script>
+    <script src="./config.js"></script>
+    <script src="./main.js"></script>
+    <script>
+      $(document).ready(() => {
+        $(".back").click(() => {
+          history.back();
+        });
+
+        $(".contacts-send-btn").click((e) => {
+          $(".send-card-form").show(0, () => {
+            $(".send-card-form").css({
+              transform: "translateY(0vh)"
+            });
+          });
+          e.stopPropagation()
+        });
+
+        $(".close").click(() => {
+          setTimeout(() => {
+            $(".send-card-form").hide();
+          }, 500);
+          $(".send-card-form").css({
+            transform: "translateY(76vh)"
+          });
+        });
+
+        $('.one-contacts').click(()=>{
+            location.href='./carddetail.html'
+        })
+      });
+    </script>
+  </body>
+</html>
