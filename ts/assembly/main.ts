@@ -1,8 +1,8 @@
-import { logging, storage, math } from "near-runtime-ts";
+import { logging, storage, context } from "near-runtime-ts";
 // available class: near, context, storage, logging, base58, base64,
 // PersistentMap, PersistentVector, PersistentDeque, PersistentTopN, ContractPromise, math
 import { TextMessage } from "./model";
-import { TemplateModel } from "./model";
+import { isBlank } from "./util";
 
 const NAME = ". Welcome to NEAR Protocol chain";
 export function welcome(name: string): TextMessage {
@@ -22,39 +22,115 @@ function printString(s: string): string {
     return s;
 }
 
+const CARD_SUFFIX = "_cards";
+const RECI_CARD_SUFFIX = "_reci_cards";
+const TEMPLATE_SUFFIX = "_templates";
+const CONTRACT_SUFFIX = "_contracts";
+
 /**
- * 创建模板
- * @param accountId 模板创建者
+ * 创建（更新）模板
  * @param templateInfo 模板信息
  */
-export function createTemplate(
-    accountId: string,
-    templateInfo: string
-): boolean {
-    if (isBlank(accountId) || isBlank(templateInfo)) {
+export function createTemplate(templateInfo: string): boolean {
+    if (!context.sender) {
         return false;
     }
 
-    storage.setString(accountId + "_templates", templateInfo);
+    storage.setString(context.sender + TEMPLATE_SUFFIX, templateInfo);
     return true;
 }
 
 /**
  * 查询创建的模板
- * @param accountId 目标用户
  */
-export function listTemplate(accountId: string): string {
-    return storage.getString(accountId + "_templates")!;
+export function listTemplate(): string {
+    return storage.getString(context.sender + TEMPLATE_SUFFIX)!;
 }
 
 /**
- * 判断字符串是否为空
- * @param str 目标字符串
+ * 创建（更新）新卡
+ * cardInfo 推荐使用json，且包含以下信息
+ * cardName: string,
+ * publicInfo: string,
+ * privateInfo: string,
+ * count: i32=1,
+ * total: f32=0.0,
+ * isAvg: boolean=true
+ * @param cardInfo 需创建的卡片信息
  */
-function isBlank(str: string): boolean {
-    if (str == null || str.trim().length < 1) {
-        return true;
+export function createCard(cardInfo: string): boolean {
+
+    let result = true;
+
+    let sender = context.sender;
+
+    if (!sender) {
+        logging.log("需先登录获取用户信息");
+        return false;
+    } else if (isBlank(cardInfo)) {
+        logging.log("cardInfo 为空");
+        return false;
     }
 
-    return false;
+    storage.setString(sender + CARD_SUFFIX, cardInfo);
+
+    return result;
+}
+
+/**
+ * 查询卡片列表
+ */
+export function listCard(): string {
+    return storage.getString(context.sender + CARD_SUFFIX)!;
+}
+
+/**
+ * 创建接收的卡片信息
+ * @param cardInfo 接收到的卡片信息
+ */
+export function createReciCard(cardInfo: string): boolean {
+    let result = true;
+
+    let sender = context.sender;
+
+    if (!sender) {
+        logging.log("需先登录获取用户信息");
+        return false;
+    } else if (isBlank(cardInfo)) {
+        logging.log("cardInfo 为空");
+        return false;
+    }
+
+    storage.setString(sender + RECI_CARD_SUFFIX, cardInfo);
+
+    return result;
+}
+
+/**
+ * 创建（更新）联系人
+ * @param contractInfo 联系人信息
+ */
+export function createContract(contractInfo: string): boolean {
+    let result = true;
+
+    let sender = context.sender;
+
+    if (!sender) {
+        logging.log("需先登录获取用户信息");
+        return false;
+    } else if (isBlank(contractInfo)) {
+        logging.log("contractInfo 为空");
+        return false;
+    }
+
+    storage.setString(sender + CONTRACT_SUFFIX, contractInfo);
+
+    return result;
+}
+
+/**
+ * 查询联系人
+ */
+export function listContract(): string {
+    return storage.getString(context.sender + CONTRACT_SUFFIX)!;
 }
