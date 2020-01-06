@@ -58,7 +58,7 @@ export function listTemplate(): string {
  * isAvg: boolean=true
  * @param cardInfo 需创建的卡片信息
  */
-export function createCard(cardInfo: string): boolean {
+export function createCard(cardInfo: string, cardCode: string, newCardInfo: string): boolean {
 
     let result = true;
 
@@ -73,15 +73,23 @@ export function createCard(cardInfo: string): boolean {
     }
 
     storage.setString(sender + CARD_SUFFIX, cardInfo);
+    storage.setString(cardCode, newCardInfo);
 
     return result;
+}
+
+/**
+ * 获取卡信息
+ */
+export function getCardInfo(cardCode: string): string {
+    return storage.getString(cardCode)!;
 }
 
 /**
  * 查询卡片列表
  */
 export function listCard(): string {
-    logging.log(context.sender)
+    // logging.log(context.sender)
     return storage.getString(context.sender + CARD_SUFFIX)!;
 }
 

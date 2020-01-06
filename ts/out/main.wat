@@ -116,11 +116,18 @@
  (data (i32.const 3880) "\1a\00\00\00\01\00\00\00\01\00\00\00\1a\00\00\00H\00e\00l\00l\00o\00,\00 \00W\00o\00r\00l\00d\00!")
  (data (i32.const 3928) "\18\00\00\00\01\00\00\00\01\00\00\00\18\00\00\00t\00e\00m\00p\00l\00a\00t\00e\00I\00n\00f\00o")
  (data (i32.const 3968) "\10\00\00\00\01\00\00\00\01\00\00\00\10\00\00\00c\00a\00r\00d\00I\00n\00f\00o")
- (data (i32.const 4000) "\14\00\00\00\01\00\00\00\01\00\00\00\14\00\00\00\00\97HQ{vU_\b7\83\d6S(u7b\e1Oo`")
- (data (i32.const 4040) "\16\00\00\00\01\00\00\00\01\00\00\00\16\00\00\00c\00a\00r\00d\00I\00n\00f\00o\00 \00:Nzz")
- (data (i32.const 4080) "\18\00\00\00\01\00\00\00\01\00\00\00\18\00\00\00c\00o\00n\00t\00r\00a\00c\00t\00I\00n\00f\00o")
- (data (i32.const 4120) "\1e\00\00\00\01\00\00\00\01\00\00\00\1e\00\00\00c\00o\00n\00t\00r\00a\00c\00t\00I\00n\00f\00o\00 \00:Nzz")
- (data (i32.const 4168) "\1a\00\00\00\10\00\00\00\00\00\00\00\10\00\00\00\00\00\00\00\10\00\00\00\00\00\00\00\10\00\00\00\00\00\00\00\10\00\00\00\00\00\00\00\10\00\00\00\00\00\00\001\00\00\00\02\00\00\00\10\00\00\00\00\00\00\00\10\00\00\00\07\00\00\00\98 A\00\00\00\00\00\93 \00\00\02\00\00\00\10\00\00\00\00\00\00\00\10\00\00\00\0b\00\00\00\10\00\00\00\0c\00\00\00\93 \00\00\02\00\00\00\10\00\00\00\00\00\00\00\10\00\00\00\00\00\00\00\10\00\00\00\07\00\00\00\93\04\00\00\02\00\00\00\10\00\00\00\07\00\00\00\10\00\00\00\07\00\00\00\10\00\00\00\07\00\00\00\10\00\00\00\07\00\00\00\10\00\00\00\00\00\00\00\10\00\00\00\00\00\00\00\93\00\00\00\02")
+ (data (i32.const 4000) "\10\00\00\00\01\00\00\00\01\00\00\00\10\00\00\00c\00a\00r\00d\00C\00o\00d\00e")
+ (data (i32.const 4032) "\16\00\00\00\01\00\00\00\01\00\00\00\16\00\00\00n\00e\00w\00C\00a\00r\00d\00I\00n\00f\00o")
+ (data (i32.const 4072) "\14\00\00\00\01\00\00\00\01\00\00\00\14\00\00\00\00\97HQ{vU_\b7\83\d6S(u7b\e1Oo`")
+ (data (i32.const 4112) "\16\00\00\00\01\00\00\00\01\00\00\00\16\00\00\00c\00a\00r\00d\00I\00n\00f\00o\00 \00:Nzz")
+ (data (i32.const 4152) "\18\00\00\00\01\00\00\00\01\00\00\00\18\00\00\00c\00o\00n\00t\00r\00a\00c\00t\00I\00n\00f\00o")
+ (data (i32.const 4192) "\16\00\00\00\01\00\00\00\01\00\00\00\16\00\00\00n\00e\00w\00C\00o\00n\00t\00r\00a\00c\00t")
+ (data (i32.const 4232) "\1e\00\00\00\01\00\00\00\01\00\00\00\1e\00\00\00n\00e\00w\00C\00o\00n\00t\00r\00a\00c\00t\00I\00n\00f\00o")
+ (data (i32.const 4280) "\1e\00\00\00\01\00\00\00\01\00\00\00\1e\00\00\00c\00o\00n\00t\00r\00a\00c\00t\00I\00n\00f\00o\00 \00:Nzz")
+ (data (i32.const 4328) "\1c\00\00\00\01\00\00\00\01\00\00\00\1c\00\00\00n\00e\00w\00C\00o\00n\00t\00r\00a\00c\00t\00 \00:Nzz")
+ (data (i32.const 4376) "$\00\00\00\01\00\00\00\01\00\00\00$\00\00\00n\00e\00w\00C\00o\00n\00t\00r\00a\00c\00t\00I\00n\00f\00o\00 \00:Nzz")
+ (data (i32.const 4432) "\10\00\00\00\01\00\00\00\01\00\00\00\10\00\00\00c\00o\00n\00t\00r\00a\00c\00t")
+ (data (i32.const 4464) "\1a\00\00\00\10\00\00\00\00\00\00\00\10\00\00\00\00\00\00\00\10\00\00\00\00\00\00\00\10\00\00\00\00\00\00\00\10\00\00\00\00\00\00\00\10\00\00\00\00\00\00\001\00\00\00\02\00\00\00\10\00\00\00\00\00\00\00\10\00\00\00\07\00\00\00\98 A\00\00\00\00\00\93 \00\00\02\00\00\00\10\00\00\00\00\00\00\00\10\00\00\00\0b\00\00\00\10\00\00\00\0c\00\00\00\93 \00\00\02\00\00\00\10\00\00\00\00\00\00\00\10\00\00\00\00\00\00\00\10\00\00\00\07\00\00\00\93\04\00\00\02\00\00\00\10\00\00\00\07\00\00\00\10\00\00\00\07\00\00\00\10\00\00\00\07\00\00\00\10\00\00\00\07\00\00\00\10\00\00\00\00\00\00\00\10\00\00\00\00\00\00\00\93\00\00\00\02")
  (global $~lib/rt/stub/startOffset (mut i32) (i32.const 0))
  (global $~lib/rt/stub/offset (mut i32) (i32.const 0))
  (global $~lib/near-runtime-ts/storage/storage (mut i32) (i32.const 0))
@@ -132,7 +139,7 @@
  (global $~lib/nearEntry/JSON.handler (mut i32) (i32.const 0))
  (global $~lib/nearEntry/JSON.decoder (mut i32) (i32.const 0))
  (global $~lib/argc (mut i32) (i32.const 0))
- (global $~lib/rt/__rtti_base i32 (i32.const 4168))
+ (global $~lib/rt/__rtti_base i32 (i32.const 4464))
  (export "memory" (memory $0))
  (export "__alloc" (func $~lib/rt/stub/__alloc))
  (export "__retain" (func $~lib/rt/stub/__retain))
@@ -144,6 +151,7 @@
  (export "createTemplate" (func $assembly/main/__wrapper_createTemplate))
  (export "listTemplate" (func $assembly/main/__wrapper_listTemplate))
  (export "createCard" (func $assembly/main/__wrapper_createCard))
+ (export "getCardInfo" (func $assembly/main/__wrapper_getCardInfo))
  (export "listCard" (func $assembly/main/__wrapper_listCard))
  (export "createReciCard" (func $assembly/main/__wrapper_createReciCard))
  (export "createContract" (func $assembly/main/__wrapper_createContract))
@@ -254,9 +262,9 @@
   end
  )
  (func $start:~lib/near-runtime-ts/storage (; 14 ;) (type $FUNCSIG$v)
-  i32.const 4384
+  i32.const 4688
   global.set $~lib/rt/stub/startOffset
-  i32.const 4384
+  i32.const 4688
   global.set $~lib/rt/stub/offset
   i32.const 0
   call $~lib/near-runtime-ts/storage/Storage#constructor
@@ -1091,7 +1099,7 @@
   i32.sub
   i32.load offset=8
   local.tee $0
-  i32.const 4168
+  i32.const 4464
   local.tee $2
   i32.load
   i32.le_u
@@ -7638,30 +7646,40 @@
   call $~lib/rt/stub/__release
   i32.const 0
  )
- (func $assembly/main/createCard (; 182 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
-  (local $1 i32)
-  (local $2 i32)
+ (func $assembly/main/createCard (; 182 ;) (type $FUNCSIG$iiii) (param $0 i32) (param $1 i32) (param $2 i32) (result i32)
   (local $3 i32)
   (local $4 i32)
+  (local $5 i32)
+  (local $6 i32)
   local.get $0
   call $~lib/rt/stub/__retain
   drop
+  local.get $1
+  call $~lib/rt/stub/__retain
+  drop
+  local.get $2
+  call $~lib/rt/stub/__retain
+  drop
   i32.const 1
-  local.set $3
+  local.set $5
   global.get $~lib/near-runtime-ts/contract/context
   call $~lib/near-runtime-ts/contract/Context#get:sender
-  local.tee $2
+  local.tee $4
   call $~lib/rt/stub/__retain
-  local.tee $1
+  local.tee $3
   call $~lib/string/String.__not
   if
-   i32.const 4016
+   i32.const 4088
    call $~lib/near-runtime-ts/logging/logging.log
    local.get $0
    call $~lib/rt/stub/__release
+   local.get $1
+   call $~lib/rt/stub/__release
    local.get $2
    call $~lib/rt/stub/__release
-   local.get $1
+   local.get $4
+   call $~lib/rt/stub/__release
+   local.get $3
    call $~lib/rt/stub/__release
    i32.const 0
    return
@@ -7669,49 +7687,63 @@
    local.get $0
    call $assembly/util/isBlank
    if
-    i32.const 4056
+    i32.const 4128
     call $~lib/near-runtime-ts/logging/logging.log
     local.get $0
     call $~lib/rt/stub/__release
+    local.get $1
+    call $~lib/rt/stub/__release
     local.get $2
     call $~lib/rt/stub/__release
-    local.get $1
+    local.get $4
+    call $~lib/rt/stub/__release
+    local.get $3
     call $~lib/rt/stub/__release
     i32.const 0
     return
    end
   end
   global.get $~lib/near-runtime-ts/storage/storage
-  local.get $1
+  local.get $3
   i32.const 816
   call $~lib/string/String.__concat
-  local.tee $4
+  local.tee $6
   local.get $0
   call $~lib/near-runtime-ts/storage/Storage#setString
+  global.get $~lib/near-runtime-ts/storage/storage
+  local.get $1
   local.get $2
+  call $~lib/near-runtime-ts/storage/Storage#setString
+  local.get $4
+  call $~lib/rt/stub/__release
+  local.get $3
+  call $~lib/rt/stub/__release
+  local.get $6
+  call $~lib/rt/stub/__release
+  local.get $0
   call $~lib/rt/stub/__release
   local.get $1
   call $~lib/rt/stub/__release
-  local.get $4
+  local.get $2
   call $~lib/rt/stub/__release
-  local.get $0
-  call $~lib/rt/stub/__release
-  local.get $3
+  local.get $5
  )
  (func $assembly/main/__wrapper_createCard (; 183 ;) (type $FUNCSIG$v)
   (local $0 i32)
   (local $1 i32)
   (local $2 i32)
-  (local $3 i64)
-  (local $4 i32)
+  (local $3 i32)
+  (local $4 i64)
   (local $5 i32)
   (local $6 i32)
   (local $7 i32)
+  (local $8 i32)
+  (local $9 i32)
   i64.const 0
   call $~lib/nearEntry/input
   i64.const 0
   call $~lib/nearEntry/register_len
-  local.tee $3
+  local.tee $4
   i64.const 4294967295
   i64.eq
   if
@@ -7719,54 +7751,177 @@
   end
   i64.const 0
   i32.const 0
-  local.get $3
+  local.get $4
   i32.wrap_i64
   call $~lib/typedarray/Uint8Array#constructor
-  local.tee $1
+  local.tee $2
   call $~lib/typedarray/Uint8Array#get:buffer
-  local.tee $4
+  local.tee $5
   i64.extend_i32_u
   call $~lib/nearEntry/read_register
-  local.get $1
+  local.get $2
   call $~lib/nearEntry/JSON.parse
-  local.tee $5
+  local.tee $0
   i32.const 3984
   call $~lib/nearEntry/decode<~lib/string/String,~lib/nearEntry/Obj>
   local.tee $6
+  local.get $0
+  i32.const 4016
+  call $~lib/nearEntry/decode<~lib/string/String,~lib/nearEntry/Obj>
+  local.tee $7
+  local.get $0
+  i32.const 4048
+  call $~lib/nearEntry/decode<~lib/string/String,~lib/nearEntry/Obj>
+  local.tee $8
   call $assembly/main/createCard
   i32.const 0
   i32.const 0
   call $~lib/assemblyscript-json/encoder/JSONEncoder#constructor
-  local.tee $7
+  local.tee $9
   call $~lib/nearEntry/encode<bool,~lib/typedarray/Uint8Array>
-  local.set $0
+  local.set $1
   i32.const 0
   call $~lib/rt/stub/__release
-  local.get $0
-  local.tee $2
+  local.get $1
+  local.tee $3
   call $~lib/arraybuffer/ArrayBufferView#get:byteLength
   i64.extend_i32_s
-  local.get $2
+  local.get $3
   call $~lib/typedarray/Uint8Array#get:buffer
-  local.tee $0
+  local.tee $1
   i64.extend_i32_u
   call $~lib/nearEntry/value_return
-  local.get $1
-  call $~lib/rt/stub/__release
-  local.get $4
+  local.get $2
   call $~lib/rt/stub/__release
   local.get $5
+  call $~lib/rt/stub/__release
+  local.get $0
   call $~lib/rt/stub/__release
   local.get $6
   call $~lib/rt/stub/__release
   local.get $7
   call $~lib/rt/stub/__release
+  local.get $8
+  call $~lib/rt/stub/__release
+  local.get $9
+  call $~lib/rt/stub/__release
+  local.get $3
+  call $~lib/rt/stub/__release
+  local.get $1
+  call $~lib/rt/stub/__release
+ )
+ (func $assembly/main/getCardInfo (; 184 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
+  (local $1 i32)
+  local.get $0
+  call $~lib/rt/stub/__retain
+  drop
+  global.get $~lib/near-runtime-ts/storage/storage
+  local.get $0
+  call $~lib/near-runtime-ts/storage/Storage#getString
+  local.tee $1
+  if (result i32)
+   local.get $1
+  else
+   unreachable
+  end
+  call $~lib/rt/stub/__retain
+  local.set $1
+  local.get $0
+  call $~lib/rt/stub/__release
+  local.get $1
+ )
+ (func $assembly/main/__wrapper_getCardInfo (; 185 ;) (type $FUNCSIG$v)
+  (local $0 i32)
+  (local $1 i32)
+  (local $2 i32)
+  (local $3 i32)
+  (local $4 i32)
+  (local $5 i64)
+  (local $6 i32)
+  (local $7 i32)
+  (local $8 i32)
+  i64.const 0
+  call $~lib/nearEntry/input
+  i64.const 0
+  call $~lib/nearEntry/register_len
+  local.tee $5
+  i64.const 4294967295
+  i64.eq
+  if
+   call $~lib/nearEntry/panic
+  end
+  i64.const 0
+  i32.const 0
+  local.get $5
+  i32.wrap_i64
+  call $~lib/typedarray/Uint8Array#constructor
+  local.tee $4
+  call $~lib/typedarray/Uint8Array#get:buffer
+  local.tee $6
+  i64.extend_i32_u
+  call $~lib/nearEntry/read_register
+  local.get $4
+  call $~lib/nearEntry/JSON.parse
+  local.tee $7
+  i32.const 4016
+  call $~lib/nearEntry/decode<~lib/string/String,~lib/nearEntry/Obj>
+  local.tee $8
+  call $assembly/main/getCardInfo
+  local.set $3
+  i32.const 0
+  call $~lib/assemblyscript-json/encoder/JSONEncoder#constructor
+  local.set $2
+  i32.const 0
+  local.set $0
+  local.get $3
+  i32.const 0
+  call $~lib/string/String.__eq
+  if (result i32)
+   local.get $2
+   i32.const 0
+   call $~lib/assemblyscript-json/encoder/JSONEncoder#setNull
+   local.get $2
+   call $~lib/assemblyscript-json/encoder/JSONEncoder#serialize
+   local.set $1
+   local.get $0
+   call $~lib/rt/stub/__release
+   local.get $1
+  else
+   local.get $3
+   i32.const 0
+   local.get $2
+   call $~lib/nearEntry/encode<~lib/string/String,~lib/typedarray/Uint8Array>
+   local.set $1
+   local.get $0
+   call $~lib/rt/stub/__release
+   local.get $1
+  end
+  local.tee $0
+  call $~lib/arraybuffer/ArrayBufferView#get:byteLength
+  i64.extend_i32_s
+  local.get $0
+  call $~lib/typedarray/Uint8Array#get:buffer
+  local.tee $1
+  i64.extend_i32_u
+  call $~lib/nearEntry/value_return
+  local.get $4
+  call $~lib/rt/stub/__release
+  local.get $6
+  call $~lib/rt/stub/__release
+  local.get $7
+  call $~lib/rt/stub/__release
+  local.get $8
+  call $~lib/rt/stub/__release
+  local.get $3
+  call $~lib/rt/stub/__release
   local.get $2
   call $~lib/rt/stub/__release
   local.get $0
   call $~lib/rt/stub/__release
+  local.get $1
+  call $~lib/rt/stub/__release
  )
- (func $assembly/main/listCard (; 184 ;) (type $FUNCSIG$i) (result i32)
+ (func $assembly/main/listCard (; 186 ;) (type $FUNCSIG$i) (result i32)
   (local $0 i32)
   (local $1 i32)
   (local $2 i32)
@@ -7792,7 +7947,7 @@
   call $~lib/rt/stub/__release
   local.get $0
  )
- (func $assembly/main/__wrapper_listCard (; 185 ;) (type $FUNCSIG$v)
+ (func $assembly/main/__wrapper_listCard (; 187 ;) (type $FUNCSIG$v)
   (local $0 i32)
   (local $1 i32)
   (local $2 i32)
@@ -7844,7 +7999,7 @@
   local.get $1
   call $~lib/rt/stub/__release
  )
- (func $assembly/main/createReciCard (; 186 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
+ (func $assembly/main/createReciCard (; 188 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
   (local $1 i32)
   (local $2 i32)
   (local $3 i32)
@@ -7861,7 +8016,7 @@
   local.tee $1
   call $~lib/string/String.__not
   if
-   i32.const 4016
+   i32.const 4088
    call $~lib/near-runtime-ts/logging/logging.log
    local.get $0
    call $~lib/rt/stub/__release
@@ -7875,7 +8030,7 @@
    local.get $0
    call $assembly/util/isBlank
    if
-    i32.const 4056
+    i32.const 4128
     call $~lib/near-runtime-ts/logging/logging.log
     local.get $0
     call $~lib/rt/stub/__release
@@ -7904,7 +8059,7 @@
   call $~lib/rt/stub/__release
   local.get $3
  )
- (func $assembly/main/__wrapper_createReciCard (; 187 ;) (type $FUNCSIG$v)
+ (func $assembly/main/__wrapper_createReciCard (; 189 ;) (type $FUNCSIG$v)
   (local $0 i32)
   (local $1 i32)
   (local $2 i32)
@@ -7972,30 +8127,41 @@
   local.get $0
   call $~lib/rt/stub/__release
  )
- (func $assembly/main/createContract (; 188 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
-  (local $1 i32)
-  (local $2 i32)
+ (func $assembly/main/createContract (; 190 ;) (type $FUNCSIG$iiii) (param $0 i32) (param $1 i32) (param $2 i32) (result i32)
   (local $3 i32)
   (local $4 i32)
+  (local $5 i32)
+  (local $6 i32)
+  (local $7 i32)
   local.get $0
   call $~lib/rt/stub/__retain
   drop
+  local.get $1
+  call $~lib/rt/stub/__retain
+  drop
+  local.get $2
+  call $~lib/rt/stub/__retain
+  drop
   i32.const 1
-  local.set $3
+  local.set $5
   global.get $~lib/near-runtime-ts/contract/context
   call $~lib/near-runtime-ts/contract/Context#get:sender
-  local.tee $2
+  local.tee $4
   call $~lib/rt/stub/__retain
-  local.tee $1
+  local.tee $3
   call $~lib/string/String.__not
   if
-   i32.const 4016
+   i32.const 4088
    call $~lib/near-runtime-ts/logging/logging.log
    local.get $0
    call $~lib/rt/stub/__release
+   local.get $1
+   call $~lib/rt/stub/__release
    local.get $2
    call $~lib/rt/stub/__release
-   local.get $1
+   local.get $4
+   call $~lib/rt/stub/__release
+   local.get $3
    call $~lib/rt/stub/__release
    i32.const 0
    return
@@ -8003,49 +8169,106 @@
    local.get $0
    call $assembly/util/isBlank
    if
-    i32.const 4136
+    i32.const 4296
     call $~lib/near-runtime-ts/logging/logging.log
     local.get $0
     call $~lib/rt/stub/__release
+    local.get $1
+    call $~lib/rt/stub/__release
     local.get $2
     call $~lib/rt/stub/__release
-    local.get $1
+    local.get $4
+    call $~lib/rt/stub/__release
+    local.get $3
     call $~lib/rt/stub/__release
     i32.const 0
     return
+   else
+    local.get $1
+    call $assembly/util/isBlank
+    if
+     i32.const 4344
+     call $~lib/near-runtime-ts/logging/logging.log
+     local.get $0
+     call $~lib/rt/stub/__release
+     local.get $1
+     call $~lib/rt/stub/__release
+     local.get $2
+     call $~lib/rt/stub/__release
+     local.get $4
+     call $~lib/rt/stub/__release
+     local.get $3
+     call $~lib/rt/stub/__release
+     i32.const 0
+     return
+    else
+     local.get $2
+     call $assembly/util/isBlank
+     if
+      i32.const 4392
+      call $~lib/near-runtime-ts/logging/logging.log
+      local.get $0
+      call $~lib/rt/stub/__release
+      local.get $1
+      call $~lib/rt/stub/__release
+      local.get $2
+      call $~lib/rt/stub/__release
+      local.get $4
+      call $~lib/rt/stub/__release
+      local.get $3
+      call $~lib/rt/stub/__release
+      i32.const 0
+      return
+     end
+    end
    end
   end
+  global.get $~lib/near-runtime-ts/storage/storage
+  local.get $3
+  i32.const 928
+  call $~lib/string/String.__concat
+  local.tee $6
+  local.get $0
+  call $~lib/near-runtime-ts/storage/Storage#setString
   global.get $~lib/near-runtime-ts/storage/storage
   local.get $1
   i32.const 928
   call $~lib/string/String.__concat
-  local.tee $4
-  local.get $0
-  call $~lib/near-runtime-ts/storage/Storage#setString
+  local.tee $7
   local.get $2
+  call $~lib/near-runtime-ts/storage/Storage#setString
+  local.get $4
+  call $~lib/rt/stub/__release
+  local.get $3
+  call $~lib/rt/stub/__release
+  local.get $6
+  call $~lib/rt/stub/__release
+  local.get $7
+  call $~lib/rt/stub/__release
+  local.get $0
   call $~lib/rt/stub/__release
   local.get $1
   call $~lib/rt/stub/__release
-  local.get $4
+  local.get $2
   call $~lib/rt/stub/__release
-  local.get $0
-  call $~lib/rt/stub/__release
-  local.get $3
+  local.get $5
  )
- (func $assembly/main/__wrapper_createContract (; 189 ;) (type $FUNCSIG$v)
+ (func $assembly/main/__wrapper_createContract (; 191 ;) (type $FUNCSIG$v)
   (local $0 i32)
   (local $1 i32)
   (local $2 i32)
-  (local $3 i64)
-  (local $4 i32)
+  (local $3 i32)
+  (local $4 i64)
   (local $5 i32)
   (local $6 i32)
   (local $7 i32)
+  (local $8 i32)
+  (local $9 i32)
   i64.const 0
   call $~lib/nearEntry/input
   i64.const 0
   call $~lib/nearEntry/register_len
-  local.tee $3
+  local.tee $4
   i64.const 4294967295
   i64.eq
   if
@@ -8053,84 +8276,156 @@
   end
   i64.const 0
   i32.const 0
-  local.get $3
+  local.get $4
   i32.wrap_i64
   call $~lib/typedarray/Uint8Array#constructor
-  local.tee $1
+  local.tee $2
   call $~lib/typedarray/Uint8Array#get:buffer
-  local.tee $4
+  local.tee $5
   i64.extend_i32_u
   call $~lib/nearEntry/read_register
-  local.get $1
+  local.get $2
   call $~lib/nearEntry/JSON.parse
-  local.tee $5
-  i32.const 4096
+  local.tee $0
+  i32.const 4168
   call $~lib/nearEntry/decode<~lib/string/String,~lib/nearEntry/Obj>
   local.tee $6
+  local.get $0
+  i32.const 4208
+  call $~lib/nearEntry/decode<~lib/string/String,~lib/nearEntry/Obj>
+  local.tee $7
+  local.get $0
+  i32.const 4248
+  call $~lib/nearEntry/decode<~lib/string/String,~lib/nearEntry/Obj>
+  local.tee $8
   call $assembly/main/createContract
   i32.const 0
   i32.const 0
   call $~lib/assemblyscript-json/encoder/JSONEncoder#constructor
-  local.tee $7
+  local.tee $9
   call $~lib/nearEntry/encode<bool,~lib/typedarray/Uint8Array>
-  local.set $0
+  local.set $1
   i32.const 0
   call $~lib/rt/stub/__release
-  local.get $0
-  local.tee $2
+  local.get $1
+  local.tee $3
   call $~lib/arraybuffer/ArrayBufferView#get:byteLength
   i64.extend_i32_s
-  local.get $2
+  local.get $3
   call $~lib/typedarray/Uint8Array#get:buffer
-  local.tee $0
+  local.tee $1
   i64.extend_i32_u
   call $~lib/nearEntry/value_return
-  local.get $1
-  call $~lib/rt/stub/__release
-  local.get $4
+  local.get $2
   call $~lib/rt/stub/__release
   local.get $5
+  call $~lib/rt/stub/__release
+  local.get $0
   call $~lib/rt/stub/__release
   local.get $6
   call $~lib/rt/stub/__release
   local.get $7
   call $~lib/rt/stub/__release
-  local.get $2
+  local.get $8
   call $~lib/rt/stub/__release
-  local.get $0
+  local.get $9
   call $~lib/rt/stub/__release
- )
- (func $assembly/main/listContract (; 190 ;) (type $FUNCSIG$i) (result i32)
-  (local $0 i32)
-  (local $1 i32)
-  (local $2 i32)
-  global.get $~lib/near-runtime-ts/storage/storage
-  global.get $~lib/near-runtime-ts/contract/context
-  call $~lib/near-runtime-ts/contract/Context#get:sender
-  local.tee $1
-  i32.const 928
-  call $~lib/string/String.__concat
-  local.tee $2
-  call $~lib/near-runtime-ts/storage/Storage#getString
-  local.tee $0
-  if (result i32)
-   local.get $0
-  else
-   unreachable
-  end
-  call $~lib/rt/stub/__retain
-  local.set $0
+  local.get $3
+  call $~lib/rt/stub/__release
   local.get $1
   call $~lib/rt/stub/__release
-  local.get $2
-  call $~lib/rt/stub/__release
-  local.get $0
  )
- (func $assembly/main/__wrapper_listContract (; 191 ;) (type $FUNCSIG$v)
+ (func $assembly/main/listContract (; 192 ;) (type $FUNCSIG$ii) (param $0 i32) (result i32)
+  (local $1 i32)
+  (local $2 i32)
+  (local $3 i32)
+  local.get $0
+  call $~lib/rt/stub/__retain
+  drop
+  local.get $0
+  call $assembly/util/isBlank
+  if (result i32)
+   global.get $~lib/near-runtime-ts/storage/storage
+   global.get $~lib/near-runtime-ts/contract/context
+   call $~lib/near-runtime-ts/contract/Context#get:sender
+   local.tee $1
+   i32.const 928
+   call $~lib/string/String.__concat
+   local.tee $2
+   call $~lib/near-runtime-ts/storage/Storage#getString
+   local.tee $3
+   if (result i32)
+    local.get $3
+   else
+    unreachable
+   end
+   call $~lib/rt/stub/__retain
+   local.set $3
+   local.get $1
+   call $~lib/rt/stub/__release
+   local.get $2
+   call $~lib/rt/stub/__release
+   local.get $0
+   call $~lib/rt/stub/__release
+   local.get $3
+  else
+   global.get $~lib/near-runtime-ts/storage/storage
+   local.get $0
+   i32.const 928
+   call $~lib/string/String.__concat
+   local.tee $2
+   call $~lib/near-runtime-ts/storage/Storage#getString
+   local.tee $1
+   if (result i32)
+    local.get $1
+   else
+    unreachable
+   end
+   call $~lib/rt/stub/__retain
+   local.set $1
+   local.get $2
+   call $~lib/rt/stub/__release
+   local.get $0
+   call $~lib/rt/stub/__release
+   local.get $1
+  end
+ )
+ (func $assembly/main/__wrapper_listContract (; 193 ;) (type $FUNCSIG$v)
   (local $0 i32)
   (local $1 i32)
   (local $2 i32)
   (local $3 i32)
+  (local $4 i32)
+  (local $5 i64)
+  (local $6 i32)
+  (local $7 i32)
+  (local $8 i32)
+  i64.const 0
+  call $~lib/nearEntry/input
+  i64.const 0
+  call $~lib/nearEntry/register_len
+  local.tee $5
+  i64.const 4294967295
+  i64.eq
+  if
+   call $~lib/nearEntry/panic
+  end
+  i64.const 0
+  i32.const 0
+  local.get $5
+  i32.wrap_i64
+  call $~lib/typedarray/Uint8Array#constructor
+  local.tee $4
+  call $~lib/typedarray/Uint8Array#get:buffer
+  local.tee $6
+  i64.extend_i32_u
+  call $~lib/nearEntry/read_register
+  local.get $4
+  call $~lib/nearEntry/JSON.parse
+  local.tee $7
+  i32.const 4448
+  call $~lib/nearEntry/decode<~lib/string/String,~lib/nearEntry/Obj>
+  local.tee $8
   call $assembly/main/listContract
   local.set $3
   i32.const 0
@@ -8169,6 +8464,14 @@
   local.tee $1
   i64.extend_i32_u
   call $~lib/nearEntry/value_return
+  local.get $4
+  call $~lib/rt/stub/__release
+  local.get $6
+  call $~lib/rt/stub/__release
+  local.get $7
+  call $~lib/rt/stub/__release
+  local.get $8
+  call $~lib/rt/stub/__release
   local.get $3
   call $~lib/rt/stub/__release
   local.get $2
@@ -8178,7 +8481,7 @@
   local.get $1
   call $~lib/rt/stub/__release
  )
- (func $start (; 192 ;) (type $FUNCSIG$v)
+ (func $start (; 194 ;) (type $FUNCSIG$v)
   call $start:~lib/rt/index-stub
   call $start:~lib/nearEntry
  )

@@ -1,11 +1,7 @@
 $(document).ready(() => {
-  var swiper = new Swiper(".card-container", {
-    slidesPerView: 1.6,
-    spaceBetween: 0,
-    centeredSlides: true,
-    loop: false
-  });
+  let cardList = [];
 
+  $(".user-name").html(window.accountId);
   $(".add-icon").click(() => {
     $(".send-card-form").show(0, () => {
       $(".send-card-form").css({
@@ -26,6 +22,52 @@ $(document).ready(() => {
   $(".my-contacts").click(() => {
     location.href = "./mycontacts.html";
   });
+
+  let getMyCardList = () => {
+    // $(".swiper-wrapper").empty();
+    let loading = $(document).dialog({
+      type: "toast",
+      infoIcon: "./assets/images/loading.gif",
+      infoText: "正在加载中"
+    });
+    window.contract.listCard().then(res => {
+      loading.close();
+      cardList = JSON.parse(res);
+      // console.log(cardList);
+      let html = "";
+      cardList.forEach(element => {
+        html += `<div class="swiper-slide" onclick="gotoDetail(${element.code})">
+        <div class="card-name">${element.cardName}</div>
+        <div class="id">${window.accountId}</div>
+        <div class="card-info">
+          <img src="./assets/images/card_number.png" />${element.publicInfo}
+        </div>`;
+        if (element.privateInfo) {
+          html += `<div class="card-info">
+            <img src="./assets/images/card_name.png" />${element.privateInfo}
+          </div>`;
+        }
+        if (element.total) {
+          html += `<div class="red-bag">
+            <img src="./assets/images/red2.png" />${element.total}
+          </div>`;
+        }
+        html += `</div>`;
+      });
+      $(".swiper-wrapper").html(html);
+      new Swiper(".card-container", {
+        slidesPerView: 1.6,
+        spaceBetween: 0,
+        centeredSlides: true,
+        loop: false
+      });
+    });
+  };
+
+  // $('.swiper-slide').click(()=>{
+  //   alert(1)
+  //   console.log($(this).dataset.code)
+  // })
 
   $(".send-btn").click(() => {
     let cardNameValue = $("#cardName").val();
@@ -70,12 +112,15 @@ $(document).ready(() => {
       });
       return;
     }
-    var loading = $(document).dialog({
+    let loading = $(document).dialog({
       type: "toast",
       infoIcon: "./assets/images/loading.gif",
       infoText: "正在加载中"
     });
+    let cardCode = new Date().getTime().toString();
     let cardInfo = {
+      code: cardCode,
+      cardUser: window.accountId,
       cardName: cardNameValue,
       publicInfo: publicInfoValue,
       privateInfo: privateInfoValue,
@@ -84,32 +129,42 @@ $(document).ready(() => {
       total: parseInt(totalValue).toFixed(2),
       expirationDate: date
     };
-    let params = JSON.stringify(cardInfo);
-    window.contract.createCard({ cardInfo: params }).then(res => {
-      if (res) {
-        loading.close();
-        $(document).dialog({
-          type: "notice",
-          infoText: "创建成功",
-          autoClose: 1500
-        });
-      } else {
-        $(document).dialog({
-          type: "notice",
-          infoText: "创建失败",
-          autoClose: 1500
-        });
-      }
-    });
+    cardList.push(cardInfo);
+    let params = JSON.stringify(cardList);
+    window.contract
+      .createCard({
+        cardInfo: params,
+        cardCode: cardCode,
+        newCardInfo: JSON.stringify(cardInfo)
+      })
+      .then(res => {
+        if (res) {
+          loading.close();
+          $(document).dialog({
+            type: "notice",
+            infoText: "创建成功",
+            autoClose: 1500,
+            onClosed: () => {
+              // location.reload();
+              location.href = "./qrcode?cardcode=" + cardCode;
+            }
+          });
+          setTimeout(() => {
+            $(".send-card-form").hide();
+          }, 500);
+          $(".send-card-form").css({
+            transform: "translateY(76vh)"
+          });
+        } else {
+          $(document).dialog({
+            type: "notice",
+            infoText: "创建失败",
+            autoClose: 1500
+          });
+        }
+      });
   });
-
-  window.contract.listCard().then(res => {
-    console.log(res);
-  });
-
-  window.contract.hello().then(res => {
-    console.log(res);
-  });
+  getMyCardList();
 });
 
 let getExpirationDate = (number, type) => {
@@ -131,4 +186,8 @@ let getExpirationDate = (number, type) => {
       return (year * number) / 2;
       break;
   }
+};
+
+let gotoDetail = code => {
+  location.href = "./carddetail?cardcode=" + code;
 };

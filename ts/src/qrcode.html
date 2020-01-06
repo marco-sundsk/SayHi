@@ -9,6 +9,7 @@
     <title>NEAR名片</title>
     <link href="./assets/css/reset.css" rel="stylesheet" type="text/css" />
     <link href="./assets/css/qrcode.css" rel="stylesheet" type="text/css" />
+    <link href="./assets/css/dialog.css" rel="stylesheet" type="text/css" />
   </head>
   <body>
     <div class="qecode-wrapper">
@@ -16,22 +17,19 @@
         <img src="./assets/images/back_w.png" />
       </div>
       <div class="content">
-          <div class="title">来自：DaSao Xu</div>
-          <img src="./assets/images/qrcode.png">
+          <div class="title">来自：<span id="name"></span></div>
+          <div id="qrcode"></div>
+          <!-- <img src="./assets/images/qrcode.png"> -->
           <div class="font">请扫描二维码</div>
       </div>
     </div>
     <script src="https://cdn.jsdelivr.net/gh/nearprotocol/nearlib@0.19.1/dist/nearlib.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
     <script src="./assets/js/jquery.js"></script>
+    <script src="./assets/js/dialog.js"></script>
+    <script src="./assets/js/qrcode.min.js"></script>
     <script src="./config.js"></script>
-    <script src="./main.js"></script>
-    <script>
-      $(document).ready(() => {
-        $(".back").click(() => {
-          history.back();
-        });
-      });
-    </script>
+    <script src="./assets/js/main.js"></script>
+    <script src="./assets/js/qrcode.js"></script>
   </body>
 </html>
