@@ -24,9 +24,9 @@ async function InitContract() {
     // eslint-disable-line require-atomic-updates
     // NOTE: This configuration only needed while NEAR is still in development
     // View methods are read only. They don't modify the state, but usually return some value.
-    viewMethods: ["welcome", "listTemplate", "hello"],
+    viewMethods: ["welcome", "listTemplate", "listCard", "hello"],
     // Change methods can modify the state. But you don't receive the returned value when called.
-    changeMethods: ["createTemplate"],
+    changeMethods: ["createTemplate", "createCard"],
     // Sender is the account ID to initialize transactions.
     sender: window.accountId
   });
