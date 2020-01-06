@@ -81,6 +81,7 @@ export function createCard(cardInfo: string): boolean {
  * 查询卡片列表
  */
 export function listCard(): string {
+    logging.log(context.sender)
     return storage.getString(context.sender + CARD_SUFFIX)!;
 }
 
@@ -110,7 +111,7 @@ export function createReciCard(cardInfo: string): boolean {
  * 创建（更新）联系人
  * @param contractInfo 联系人信息
  */
-export function createContract(contractInfo: string): boolean {
+export function createContract(contractInfo: string, newContract: string, newContractInfo: string): boolean {
     let result = true;
 
     let sender = context.sender;
@@ -121,9 +122,16 @@ export function createContract(contractInfo: string): boolean {
     } else if (isBlank(contractInfo)) {
         logging.log("contractInfo 为空");
         return false;
+    } else if (isBlank(newContract)) {
+        logging.log("newContract 为空");
+        return false;
+    } else if (isBlank(newContractInfo)) {
+        logging.log("newContractInfo 为空");
+        return false;
     }
 
     storage.setString(sender + CONTRACT_SUFFIX, contractInfo);
+    storage.setString(newContract + CONTRACT_SUFFIX, newContractInfo);
 
     return result;
 }
@@ -131,6 +139,11 @@ export function createContract(contractInfo: string): boolean {
 /**
  * 查询联系人
  */
-export function listContract(): string {
-    return storage.getString(context.sender + CONTRACT_SUFFIX)!;
+export function listContract(contract: string): string {
+
+    if (isBlank(contract)) {
+        return storage.getString(context.sender + CONTRACT_SUFFIX)!;
+    } else {
+        return storage.getString(contract + CONTRACT_SUFFIX)!;
+    }
 }
