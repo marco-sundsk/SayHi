@@ -1,17 +1,18 @@
 $(document).ready(() => {
   $(".back").click(() => {
-    history.back();
+    if (history.length == 0) {
+      location.href = "/";
+    } else {
+      history.back();
+    }
   });
 
   let cardcode = GetUrlString("cardcode");
-  let loading = $(document).dialog({
-    type: "toast",
-    infoIcon: "./assets/images/loading.gif",
-    infoText: "正在加载中"
-  });
+  let id = GetUrlString("id");
   let url =
     window.location.protocol + "//" + location.host + "?cardcode=" + cardcode;
-  console.log(url);
+  console.log(url)
+  $("#name").html(id);
   var qrcode = new QRCode("qrcode", {
     text: url,
     width: 168,
@@ -20,9 +21,11 @@ $(document).ready(() => {
     colorLight: "#ffffff",
     correctLevel: QRCode.CorrectLevel.H
   });
-  window.contract.getCardInfo({ cardCode: cardcode }).then(res => {
-    loading.close();
-    let data = JSON.parse(res);
-    $("#name").html(data.cardUser);
-  });
 });
+
+function GetUrlString(param) {
+  var sValue = location.search.match(
+    new RegExp("[?&]" + param + "=([^&]*)(&?)", "i")
+  );
+  return sValue ? decodeURI(sValue[1]) : decodeURI(sValue);
+}

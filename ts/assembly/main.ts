@@ -120,7 +120,10 @@ export function createReciCard(cardInfo: string): boolean {
  * @param contractInfo 联系人信息
  */
 export function createContract(contractInfo: string, newContract: string, newContractInfo: string): boolean {
-    let result = true;
+    logging.log(contractInfo);
+    logging.log(newContract);
+    logging.log(newContractInfo);
+    // let result = true;
 
     let sender = context.sender;
 
@@ -137,21 +140,21 @@ export function createContract(contractInfo: string, newContract: string, newCon
         logging.log("newContractInfo 为空");
         return false;
     }
+    
 
     storage.setString(sender + CONTRACT_SUFFIX, contractInfo);
     storage.setString(newContract + CONTRACT_SUFFIX, newContractInfo);
-
-    return result;
+    return true;
 }
 
 /**
  * 查询联系人
  */
 export function listContract(contract: string): string {
-
+    // logging.log(contract)
     if (isBlank(contract)) {
-        return storage.getString(context.sender + CONTRACT_SUFFIX)!;
+        return storage.getString(context.sender + CONTRACT_SUFFIX)!?storage.getString(context.sender + CONTRACT_SUFFIX)!:"没有联系人";
     } else {
-        return storage.getString(contract + CONTRACT_SUFFIX)!;
+        return storage.getString(contract + CONTRACT_SUFFIX)!?storage.getString(contract + CONTRACT_SUFFIX)!:"没有联系人";
     }
 }

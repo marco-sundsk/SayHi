@@ -127,7 +127,8 @@
  (data (i32.const 4328) "\1c\00\00\00\01\00\00\00\01\00\00\00\1c\00\00\00n\00e\00w\00C\00o\00n\00t\00r\00a\00c\00t\00 \00:Nzz")
  (data (i32.const 4376) "$\00\00\00\01\00\00\00\01\00\00\00$\00\00\00n\00e\00w\00C\00o\00n\00t\00r\00a\00c\00t\00I\00n\00f\00o\00 \00:Nzz")
  (data (i32.const 4432) "\10\00\00\00\01\00\00\00\01\00\00\00\10\00\00\00c\00o\00n\00t\00r\00a\00c\00t")
- (data (i32.const 4464) "\1a\00\00\00\10\00\00\00\00\00\00\00\10\00\00\00\00\00\00\00\10\00\00\00\00\00\00\00\10\00\00\00\00\00\00\00\10\00\00\00\00\00\00\00\10\00\00\00\00\00\00\001\00\00\00\02\00\00\00\10\00\00\00\00\00\00\00\10\00\00\00\07\00\00\00\98 A\00\00\00\00\00\93 \00\00\02\00\00\00\10\00\00\00\00\00\00\00\10\00\00\00\0b\00\00\00\10\00\00\00\0c\00\00\00\93 \00\00\02\00\00\00\10\00\00\00\00\00\00\00\10\00\00\00\00\00\00\00\10\00\00\00\07\00\00\00\93\04\00\00\02\00\00\00\10\00\00\00\07\00\00\00\10\00\00\00\07\00\00\00\10\00\00\00\07\00\00\00\10\00\00\00\07\00\00\00\10\00\00\00\00\00\00\00\10\00\00\00\00\00\00\00\93\00\00\00\02")
+ (data (i32.const 4464) "\n\00\00\00\01\00\00\00\01\00\00\00\n\00\00\00\a1l\tgT\80\fb|\baN")
+ (data (i32.const 4496) "\1a\00\00\00\10\00\00\00\00\00\00\00\10\00\00\00\00\00\00\00\10\00\00\00\00\00\00\00\10\00\00\00\00\00\00\00\10\00\00\00\00\00\00\00\10\00\00\00\00\00\00\001\00\00\00\02\00\00\00\10\00\00\00\00\00\00\00\10\00\00\00\07\00\00\00\98 A\00\00\00\00\00\93 \00\00\02\00\00\00\10\00\00\00\00\00\00\00\10\00\00\00\0b\00\00\00\10\00\00\00\0c\00\00\00\93 \00\00\02\00\00\00\10\00\00\00\00\00\00\00\10\00\00\00\00\00\00\00\10\00\00\00\07\00\00\00\93\04\00\00\02\00\00\00\10\00\00\00\07\00\00\00\10\00\00\00\07\00\00\00\10\00\00\00\07\00\00\00\10\00\00\00\07\00\00\00\10\00\00\00\00\00\00\00\10\00\00\00\00\00\00\00\93\00\00\00\02")
  (global $~lib/rt/stub/startOffset (mut i32) (i32.const 0))
  (global $~lib/rt/stub/offset (mut i32) (i32.const 0))
  (global $~lib/near-runtime-ts/storage/storage (mut i32) (i32.const 0))
@@ -139,7 +140,7 @@
  (global $~lib/nearEntry/JSON.handler (mut i32) (i32.const 0))
  (global $~lib/nearEntry/JSON.decoder (mut i32) (i32.const 0))
  (global $~lib/argc (mut i32) (i32.const 0))
- (global $~lib/rt/__rtti_base i32 (i32.const 4464))
+ (global $~lib/rt/__rtti_base i32 (i32.const 4496))
  (export "memory" (memory $0))
  (export "__alloc" (func $~lib/rt/stub/__alloc))
  (export "__retain" (func $~lib/rt/stub/__retain))
@@ -262,9 +263,9 @@
   end
  )
  (func $start:~lib/near-runtime-ts/storage (; 14 ;) (type $FUNCSIG$v)
-  i32.const 4688
+  i32.const 4720
   global.set $~lib/rt/stub/startOffset
-  i32.const 4688
+  i32.const 4720
   global.set $~lib/rt/stub/offset
   i32.const 0
   call $~lib/near-runtime-ts/storage/Storage#constructor
@@ -1099,7 +1100,7 @@
   i32.sub
   i32.load offset=8
   local.tee $0
-  i32.const 4464
+  i32.const 4496
   local.tee $2
   i32.load
   i32.le_u
@@ -8132,7 +8133,6 @@
   (local $4 i32)
   (local $5 i32)
   (local $6 i32)
-  (local $7 i32)
   local.get $0
   call $~lib/rt/stub/__retain
   drop
@@ -8142,8 +8142,12 @@
   local.get $2
   call $~lib/rt/stub/__retain
   drop
-  i32.const 1
-  local.set $5
+  local.get $0
+  call $~lib/near-runtime-ts/logging/logging.log
+  local.get $1
+  call $~lib/near-runtime-ts/logging/logging.log
+  local.get $2
+  call $~lib/near-runtime-ts/logging/logging.log
   global.get $~lib/near-runtime-ts/contract/context
   call $~lib/near-runtime-ts/contract/Context#get:sender
   local.tee $4
@@ -8227,23 +8231,23 @@
   local.get $3
   i32.const 928
   call $~lib/string/String.__concat
-  local.tee $6
+  local.tee $5
   local.get $0
   call $~lib/near-runtime-ts/storage/Storage#setString
   global.get $~lib/near-runtime-ts/storage/storage
   local.get $1
   i32.const 928
   call $~lib/string/String.__concat
-  local.tee $7
+  local.tee $6
   local.get $2
   call $~lib/near-runtime-ts/storage/Storage#setString
   local.get $4
   call $~lib/rt/stub/__release
   local.get $3
   call $~lib/rt/stub/__release
-  local.get $6
+  local.get $5
   call $~lib/rt/stub/__release
-  local.get $7
+  local.get $6
   call $~lib/rt/stub/__release
   local.get $0
   call $~lib/rt/stub/__release
@@ -8251,7 +8255,7 @@
   call $~lib/rt/stub/__release
   local.get $2
   call $~lib/rt/stub/__release
-  local.get $5
+  i32.const 1
  )
  (func $assembly/main/__wrapper_createContract (; 191 ;) (type $FUNCSIG$v)
   (local $0 i32)
@@ -8339,6 +8343,9 @@
   (local $1 i32)
   (local $2 i32)
   (local $3 i32)
+  (local $4 i32)
+  (local $5 i32)
+  (local $6 i32)
   local.get $0
   call $~lib/rt/stub/__retain
   drop
@@ -8348,42 +8355,84 @@
    global.get $~lib/near-runtime-ts/storage/storage
    global.get $~lib/near-runtime-ts/contract/context
    call $~lib/near-runtime-ts/contract/Context#get:sender
-   local.tee $1
+   local.tee $4
    i32.const 928
    call $~lib/string/String.__concat
-   local.tee $2
+   local.tee $5
    call $~lib/near-runtime-ts/storage/Storage#getString
-   local.tee $3
+   local.tee $1
    if (result i32)
+    global.get $~lib/near-runtime-ts/storage/storage
+    global.get $~lib/near-runtime-ts/contract/context
+    call $~lib/near-runtime-ts/contract/Context#get:sender
+    local.tee $6
+    i32.const 928
+    call $~lib/string/String.__concat
+    local.tee $2
+    call $~lib/near-runtime-ts/storage/Storage#getString
+    local.tee $3
+    if (result i32)
+     local.get $3
+    else
+     unreachable
+    end
+    call $~lib/rt/stub/__retain
+    local.set $3
+    local.get $6
+    call $~lib/rt/stub/__release
+    local.get $2
+    call $~lib/rt/stub/__release
     local.get $3
    else
-    unreachable
+    i32.const 4480
+    call $~lib/rt/stub/__retain
    end
    call $~lib/rt/stub/__retain
-   local.set $3
-   local.get $1
+   local.set $2
+   local.get $4
    call $~lib/rt/stub/__release
-   local.get $2
+   local.get $5
+   call $~lib/rt/stub/__release
+   local.get $1
    call $~lib/rt/stub/__release
    local.get $0
    call $~lib/rt/stub/__release
-   local.get $3
+   local.get $2
   else
    global.get $~lib/near-runtime-ts/storage/storage
    local.get $0
    i32.const 928
    call $~lib/string/String.__concat
-   local.tee $2
+   local.tee $4
    call $~lib/near-runtime-ts/storage/Storage#getString
-   local.tee $1
+   local.tee $3
    if (result i32)
+    global.get $~lib/near-runtime-ts/storage/storage
+    local.get $0
+    i32.const 928
+    call $~lib/string/String.__concat
+    local.tee $1
+    call $~lib/near-runtime-ts/storage/Storage#getString
+    local.tee $5
+    if (result i32)
+     local.get $5
+    else
+     unreachable
+    end
+    call $~lib/rt/stub/__retain
+    local.set $2
     local.get $1
+    call $~lib/rt/stub/__release
+    local.get $2
    else
-    unreachable
+    i32.const 4480
+    call $~lib/rt/stub/__retain
    end
    call $~lib/rt/stub/__retain
    local.set $1
-   local.get $2
+   local.get $4
+   call $~lib/rt/stub/__release
+   local.get $3
    call $~lib/rt/stub/__release
    local.get $0
    call $~lib/rt/stub/__release
