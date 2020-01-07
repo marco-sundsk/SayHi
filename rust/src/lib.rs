@@ -45,6 +45,21 @@ impl Template {
     }
 }
 
+// 名片model
+#[derive(Clone, Default, BorshDeserialize, BorshSerialize)]
+pub struct Card {
+    pub id: String,              // 名片唯一编号
+    pub template_id: String,     // 模板唯一编号
+    pub public_message: String,  // 公开消息
+    pub private_message: String, // 私密消息
+    pub name: String,            // 名片名称
+    pub count: u64,              // 名片数量
+    pub is_avg: bool,            // 是否均分
+    pub total: u64,              // 总红包
+    pub current_block: u64,      // 名片创建时块高
+    pub duration: u64,           // 名片超时块数
+}
+
 impl Card {
     pub fn new(
         id: String,
@@ -118,21 +133,6 @@ impl Card {
     }
 }
 
-// 名片model
-#[derive(Clone, Default, BorshDeserialize, BorshSerialize)]
-pub struct Card {
-    pub id: String,              // 名片唯一编号
-    pub template_id: String,     // 模板唯一编号
-    pub public_message: String,  // 公开消息
-    pub private_message: String, // 私密消息
-    pub name: String,            // 名片名称
-    pub count: u64,              // 名片数量
-    pub is_avg: bool,            // 是否均分
-    pub total: u64,              // 总红包
-    pub current_block: u64,      // 名片创建时块高
-    pub duration: u64,           // 名片超时块数
-}
-
 // 用于提供访问服务
 #[near_bindgen]
 #[derive(Default, BorshDeserialize, BorshSerialize)]
@@ -165,13 +165,18 @@ impl BLCardService {
     }
 
     // 列出指定账号的模板信息
-    pub fn list_template(&self, account_id: String) -> Option<Vec<String>> {
+    pub fn list_template(&self, account_id: String) -> Option<Vec<HashMap<String, String>>> {
         let list = self.template_record.get(&account_id).unwrap();
         
-        let mut temp: Vec<String> = Vec::new();
+        let mut temp: Vec<HashMap<String, String>> = Vec::new();
 
         for item in list.iter() {
-            temp.push(item.to_json_str());
+            let mut temp_map: HashMap<String, String> = HashMap::new();
+            temp_map.insert(String::from("id"), item.id.to_string());
+            temp_map.insert(String::from("name"), item.name.to_string());
+            temp_map.insert(String::from("duration"), format!("{}", item.duration));
+            // temp.push(item.to_json_str());
+            temp.push(temp_map);
         }
 
         Some(temp)
