@@ -1,0 +1,25 @@
+.login-wrap {
+    width: 100%;
+    height: 100vh;
+    background: url('../images/bg.png');
+    background-size:cover;
+}
+.logo {
+    text-align: center;
+    padding-top: 120px;
+}
+.logo img {
+    width: 50%;
+}
+.login-btn {
+    width: 55%;
+    line-height: 50px;
+    text-align: center;
+    color:#fff;
+    background: #fdbb31;
+    border-radius: 40px;
+    position: absolute;
+    bottom: 15%;
+    left:50%;
+    margin-left: -27.5%;
+}

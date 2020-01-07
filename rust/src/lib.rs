@@ -23,26 +23,6 @@ impl Template {
             duration: new_duration,
         }
     }
-
-    pub fn to_json_str(&self) -> String {
-        let mut return_msg = String::from("{");
-        
-        return_msg.push_str("\"id\"");
-        return_msg.push_str(&self.id);
-
-        return_msg.push(',');
-
-        return_msg.push_str("\"name\"");
-        return_msg.push_str(&self.name);
-
-        return_msg.push(',');
-
-        return_msg.push_str("\"duration\"");
-        return_msg.push_str(&format!("{}", &self.duration));
-
-        return_msg.push_str("}");
-        return return_msg.to_string();
-    }
 }
 
 // 名片model
@@ -86,50 +66,25 @@ impl Card {
             duration: new_duration,
         }
     }
+}
 
-    pub fn to_json_str(&self) -> String {
-        let mut return_msg = String::from("{");
-        
-        return_msg.push_str("\"id\"");
-        return_msg.push_str(&self.id);
+// 联系人(收到的卡片以及被接收者查看后创建的联系人)model
+#[derive(Clone, Default, BorshDeserialize, BorshSerialize)]
+pub struct ContactPerson {
+    pub id: String,             // 联系人唯一编号
+    pub contact_person: String, //联系人姓名
+    pub card_count: u64,        // 收到的卡片数量
+    pub duration: u64,          // 名片超时块数
+}
 
-        return_msg.push(',');
-
-        return_msg.push_str("\"template_id\"");
-        return_msg.push_str(&self.template_id);
-
-        return_msg.push(',');
-
-        return_msg.push_str("\"public_message\"");
-        return_msg.push_str(&self.public_message);
-
-        return_msg.push(',');
-
-        return_msg.push_str("\"private_message\"");
-        return_msg.push_str(&self.private_message);
-
-        return_msg.push(',');
-
-        return_msg.push_str("\"name\"");
-        return_msg.push_str(&self.name);
-
-        return_msg.push(',');
-
-        return_msg.push_str("\"count\"");
-        return_msg.push_str(&format!("{}", &self.count));
-
-        return_msg.push(',');
-
-        return_msg.push_str("\"total\"");
-        return_msg.push_str(&format!("{}", &self.total));
-
-        return_msg.push(',');
-
-        return_msg.push_str("\"duration\"");
-        return_msg.push_str(&format!("{}", &self.duration));
-
-        return_msg.push_str("}");
-        return return_msg.to_string();
+impl ContactPerson {
+    pub fn new(id: String, new_contact_person: String, new_card_count: u64, duration: u64) -> Self {
+        ContactPerson {
+            id: id,
+            contact_person: new_contact_person,
+            card_count: new_card_count,
+            duration: duration,
+        }
     }
 }
 
@@ -142,6 +97,8 @@ pub struct BLCardService {
 
     card_record: HashMap<String, Vec<Card>>, // key 为账号信息，value 为名片列表
     card_account_relation: HashMap<String, String>, // key 为名片唯一编号，value 为账号信息，用于反向查找
+
+    contract_person: HashMap<String, Vec<ContactPerson>>, // key 为账号信息，value 为联系人列表
 }
 
 #[near_bindgen]
@@ -155,11 +112,17 @@ impl BLCardService {
         }
 
         let current_block_index = env::block_index();
-        let new_template =
-            Template::new(name.to_string(), name.to_string(), current_block_index, duration); // TODO 第一个参数应该为template id
+        let new_template = Template::new(
+            name.to_string(),
+            name.to_string(),
+            current_block_index,
+            duration,
+        ); // TODO 第一个参数应该为template id
         templates.push(new_template);
-        self.template_record.insert(account_id.to_string(), templates);
-        self.template_account_relation.insert(account_id.to_string(), account_id.to_string()); // TODO 第二个参数应该为template id
+        self.template_record
+            .insert(account_id.to_string(), templates);
+        self.template_account_relation
+            .insert(account_id.to_string(), account_id.to_string()); // TODO 第二个参数应该为template id
 
         return true;
     }
@@ -167,7 +130,6 @@ impl BLCardService {
     // 列出指定账号的模板信息
     pub fn list_template(&self, account_id: String) -> Option<Vec<HashMap<String, String>>> {
         let list = self.template_record.get(&account_id).unwrap();
-        
         let mut temp: Vec<HashMap<String, String>> = Vec::new();
 
         for item in list.iter() {
@@ -175,7 +137,6 @@ impl BLCardService {
             temp_map.insert(String::from("id"), item.id.to_string());
             temp_map.insert(String::from("name"), item.name.to_string());
             temp_map.insert(String::from("duration"), format!("{}", item.duration));
-            // temp.push(item.to_json_str());
             temp.push(temp_map);
         }
 
@@ -192,7 +153,8 @@ impl BLCardService {
         count: u64,
         is_avg: bool,
         total: u64,
-        duration: u64, ) -> bool {
+        duration: u64,
+    ) -> bool {
         let account_id = env::signer_account_id();
         let mut cards: Vec<Card> = Vec::new();
         if self.template_record.contains_key(&account_id) {
@@ -214,18 +176,35 @@ impl BLCardService {
         ); // TODO 第一个参数应该为card id
         cards.push(new_card);
         self.card_record.insert(account_id.to_string(), cards);
-        self.card_account_relation.insert(account_id.to_string(), account_id.to_string()); // TODO 第二个参数应该为card id
+        self.card_account_relation
+            .insert(account_id.to_string(), account_id.to_string()); // TODO 第二个参数应该为card id
 
         return true;
     }
 
     // 列出指定账号的名片信息
-    pub fn list_card(&self, account_id: String) -> Option<Vec<String>> {
+    pub fn list_card(&self, account_id: String) -> Option<Vec<HashMap<String, String>>> {
         let list = self.card_record.get(&account_id).unwrap();
-        let mut temp: Vec<String> = Vec::new();
+        let mut temp: Vec<HashMap<String, String>> = Vec::new();
 
         for item in list.iter() {
-            temp.push(item.to_json_str());
+            let mut temp_map: HashMap<String, String> = HashMap::new();
+            temp_map.insert(String::from("id"), item.id.to_string());
+            temp_map.insert(String::from("template_id"), item.template_id.to_string());
+            temp_map.insert(
+                String::from("public_message"),
+                item.public_message.to_string(),
+            );
+            temp_map.insert(
+                String::from("private_message"),
+                item.private_message.to_string(),
+            );
+            temp_map.insert(String::from("name"), item.name.to_string());
+            temp_map.insert(String::from("count"), format!("{}", item.count));
+            temp_map.insert(String::from("total"), format!("{}", item.total));
+            temp_map.insert(String::from("duration"), format!("{}", item.duration));
+
+            temp.push(temp_map);
         }
 
         Some(temp)
@@ -239,6 +218,39 @@ impl BLCardService {
     // 通过 card 查询创建人
     pub fn find_account_by_card(&self, card_id: String) -> Option<String> {
         self.card_account_relation.get(&card_id).cloned()
+    }
+
+    // 创建联系人
+    pub fn create_contract_person(&mut self, contact_person: String, duration: u64) -> bool {
+        let account_id = env::signer_account_id();
+        let mut contact_person_vec: Vec<ContactPerson> = Vec::new();
+
+        if self.contract_person.contains_key(&account_id) {
+            contact_person_vec = self.contract_person.get(&account_id).unwrap().to_vec();
+        }
+
+        let new_contract_person = ContactPerson::new(contact_person.to_string(), contact_person.to_string(), contact_person_vec.len() as u64 + 1, duration); // TODO 第一个参数应该生成；第三个参数应该去查询已经收到的数量
+        contact_person_vec.push(new_contract_person);
+        self.contract_person.insert(account_id.to_string(), contact_person_vec);
+        return true;
+    }
+
+    pub fn list_contract_person(&self, account_id: String) -> Option<Vec<HashMap<String, String>>> {
+        let list = self.contract_person.get(&account_id).unwrap();
+
+        let mut temp: Vec<HashMap<String, String>> = Vec::new();
+
+        for item in list.iter() {
+            let mut temp_map: HashMap<String, String> = HashMap::new();
+            temp_map.insert(String::from("id"), item.id.to_string());
+            temp_map.insert(String::from("contact_person"), item.contact_person.to_string());
+            temp_map.insert(String::from("card_count"), format!("{}", item.card_count));
+            temp_map.insert(String::from("duration"), format!("{}", item.duration));
+
+            temp.push(temp_map);
+        }
+
+        Some(temp)
     }
 }
 

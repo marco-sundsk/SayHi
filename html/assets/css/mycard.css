@@ -1,0 +1,234 @@
+.index-top-bg {
+    width: 100%;
+    height: 60vh;
+    background: url('../images/bg.png');
+    position: absolute;
+    border-radius:0 0 0 100px;
+    background-size:contain;
+    filter:blur(0.5px);
+}
+.index-content {
+    width: 100%;
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+}
+.user-img {
+    display: flex;
+    width: 60%;
+    align-items: center;
+}
+.user-wrap {
+    display: flex;
+    color: #fff;
+    width: 80%;
+    margin: auto;
+    justify-content:space-between;
+    margin-top: 6vh;
+    align-items: center;
+}
+.userImg {
+    width: 8vh;
+    height: 8vh;
+}
+.user-name {
+    font-size: 15px;
+    margin-left: 15px;
+}
+.add-icon {
+    width: 5vh;
+    height: 5vh;
+}
+.my-contacts {
+    background: #f8ae1c;
+    width: 120px;
+    height: 35px;
+    color:#fff;
+    float: right;
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 12px;
+    font-size: 14px;
+    box-sizing: border-box;
+    border-radius: 35px 0 0 35px;
+    margin-top:3vh;
+}
+.right {
+    width: 10px;
+    height: 14px;
+}
+.all-card {
+    margin-left: 10%;
+    margin-top: 10vh;
+}
+.all-card .title {
+    color:#fff;
+    font-size: 14px;
+    position: relative;
+    height: 27px;
+    width: 100px;
+    text-align: center;
+}
+.all-card .title::after {
+    content: '';
+    background:#f8ae1c;
+    width:30px;
+    height: 4px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    border-radius: 5px;
+    left: 50%;
+    margin-left: -15px;
+}
+.card-container {
+    margin-top: 5vh;
+    min-height: 60vh;
+    margin-left: -25%;
+}
+
+.swiper-slide {
+    text-align: center;
+    background: #fff;
+    /* Center slide text vertically */
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    transition: 400ms;
+    transform: scale(0.9);
+    border-radius: 20px;
+    min-height: 58vh;
+    box-shadow: 2px 5px 5px rgb(160, 160, 160,.5);
+    background: #fff url('../images/mt_bg.png');
+    background-size: cover;
+    /* background-position: 0 -15px; */
+    padding-left: 5%;
+    flex-flow: column;
+    align-items: flex-start;
+    padding-top: 33vh;
+    box-sizing: border-box;
+    margin-right: 20px;
+    position: relative;
+  }
+  .swiper-slide-active,
+  .swiper-slide-duplicate-active {
+    transform: scale(1);
+  }
+
+  .card-name {
+      color:#fff;
+      margin-top: 3vh;
+      font-size: 16px;
+  }
+
+  .id {
+      color:#fdbb31;
+      font-size: 14px;
+      margin-top: 1vh;
+      margin-bottom: 2vh;
+  }
+
+  .card-info {
+      display: flex;
+      color: #fff;
+      font-size: 12px;
+      height: 25px;
+      align-items: center;
+  }
+
+  .card-info img{
+      width: 10px;
+      height: 10px;
+      margin-right: 10px;
+  }
+  .red-bag img {
+    width: 11px;
+    height: 13px;
+    margin-right: 10px;
+  }
+
+  .red-bag {
+      position: absolute;
+      display: flex;
+      height: 25px;
+      align-items: center;
+      right: 15px;
+      bottom: 10px;
+      color: #fff;
+  }
+
+  .send-card-form {
+    display: none;
+    position: absolute;
+    z-index: 2;
+    height: 76vh;
+    width: 100%;
+    bottom: 0;
+    background: #fff;
+    border-radius: 30px 30px 0 0;
+    transition: .5s;
+    transform: translateY(76vh);
+    box-shadow: 0px -5px 20px #b4b4b4;
+  }
+
+  .send-title {
+      display: flex;
+      height: 80px;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 10%;
+  }
+  .close {
+      width: 3vh;
+      height: 3vh;
+  }
+  .form-wrap {
+      padding: 10px 10%;
+  }
+  .one-form {
+      display: flex;
+      align-items: center;
+      margin-bottom: 2.5vh;
+  }
+  .one-form img {
+      width: 13px;
+      height: 13px;
+  }
+  .form-wrap .one-form:nth-child(1) img {
+    width: 13px;
+    height: 10px;
+  }
+  .form-wrap .one-form:nth-child(6) img {
+    width: 16px;
+    height: 12px;
+  }
+  .form-wrap input {
+      outline: none;
+      border: 0;
+      border-bottom: 1px solid rgb(238, 237, 237);
+      margin-left: 10px;
+      flex-grow: 1;
+      line-height: 25px;
+  }
+  .form-wrap select {
+    outline: none;
+    border: 0;
+    border-bottom: 1px solid rgb(238, 237, 237);
+    margin-left: 10px;
+    flex-grow: 1;
+    line-height: 25px;
+    height: 25px;
+    background: none;
+  }
+  
+  .send-btn {
+      width: 45px;
+      height: 45px;
+      position: absolute;
+      left: 50%;
+      margin-left: -22.5px;
+      bottom: 4vh;
+  }
