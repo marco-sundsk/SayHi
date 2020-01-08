@@ -1,4 +1,5 @@
 use borsh::{BorshDeserialize, BorshSerialize};
+use near_bindgen::collections::Map;
 use near_bindgen::{env, near_bindgen};
 use std::collections::HashMap;
 
@@ -92,13 +93,13 @@ impl ContactPerson {
 #[near_bindgen]
 #[derive(Default, BorshDeserialize, BorshSerialize)]
 pub struct BLCardService {
-    template_record: HashMap<String, Vec<Template>>, // key 为账号信息，value 为模板列表
-    template_account_relation: HashMap<String, String>, // key 为模板唯一编号，value 为账号信息，用于反向查找
+    template_record: Map<String, Vec<Template>>, // key 为账号信息，value 为模板列表
+    template_account_relation: Map<String, String>, // key 为模板唯一编号，value 为账号信息，用于反向查找
 
-    card_record: HashMap<String, Vec<Card>>, // key 为账号信息，value 为名片列表
-    card_account_relation: HashMap<String, String>, // key 为名片唯一编号，value 为账号信息，用于反向查找
+    card_record: Map<String, Vec<Card>>, // key 为账号信息，value 为名片列表
+    card_account_relation: Map<String, String>, // key 为名片唯一编号，value 为账号信息，用于反向查找
 
-    contract_person: HashMap<String, Vec<ContactPerson>>, // key 为账号信息，value 为联系人列表
+    contract_person: Map<String, Vec<ContactPerson>>, // key 为账号信息，value 为联系人列表
 }
 
 #[near_bindgen]
@@ -107,8 +108,9 @@ impl BLCardService {
     pub fn create_template(&mut self, name: String, duration: u64) -> bool {
         let account_id = env::signer_account_id();
         let mut templates: Vec<Template> = Vec::new();
-        if self.template_record.contains_key(&account_id) {
-            templates = self.template_record.get(&account_id).unwrap().to_vec();
+
+        if let Some(list) = self.template_record.get(&account_id) {
+            templates = list.to_vec();
         }
 
         let current_block_index = env::block_index();
@@ -120,27 +122,28 @@ impl BLCardService {
         ); // TODO 第一个参数应该为template id
         templates.push(new_template);
         self.template_record
-            .insert(account_id.to_string(), templates);
+            .insert(&account_id, &templates);
         self.template_account_relation
-            .insert(account_id.to_string(), account_id.to_string()); // TODO 第二个参数应该为template id
+            .insert(&account_id, &account_id); // TODO 第二个参数应该为template id
 
         return true;
     }
 
     // 列出指定账号的模板信息
     pub fn list_template(&self, account_id: String) -> Option<Vec<HashMap<String, String>>> {
-        let list = self.template_record.get(&account_id).unwrap();
-        let mut temp: Vec<HashMap<String, String>> = Vec::new();
+        self.template_record.get(&account_id).map(|record| {
+            let mut temp: Vec<HashMap<String, String>> = Vec::new();
 
-        for item in list.iter() {
-            let mut temp_map: HashMap<String, String> = HashMap::new();
-            temp_map.insert(String::from("id"), item.id.to_string());
-            temp_map.insert(String::from("name"), item.name.to_string());
-            temp_map.insert(String::from("duration"), format!("{}", item.duration));
-            temp.push(temp_map);
-        }
+            for item in record.iter() {
+                let mut temp_map: HashMap<String, String> = HashMap::new();
+                temp_map.insert(String::from("id"), item.id.to_string());
+                temp_map.insert(String::from("name"), item.name.to_string());
+                temp_map.insert(String::from("duration"), format!("{}", item.duration));
+                temp.push(temp_map);
+            }
 
-        Some(temp)
+            temp
+        })
     }
 
     // 创建名片
@@ -151,14 +154,14 @@ impl BLCardService {
         private_message: String,
         name: String,
         count: u64,
-        is_avg: bool,
         total: u64,
         duration: u64,
     ) -> bool {
         let account_id = env::signer_account_id();
         let mut cards: Vec<Card> = Vec::new();
-        if self.template_record.contains_key(&account_id) {
-            cards = self.card_record.get(&account_id).unwrap().to_vec();
+
+        if let Some(list) = self.card_record.get(&account_id) {
+            cards = list.to_vec();
         }
 
         let current_block_index = env::block_index();
@@ -169,15 +172,15 @@ impl BLCardService {
             private_message,
             name.to_string(),
             count,
-            is_avg,
+            true,
             total,
             current_block_index,
             duration,
         ); // TODO 第一个参数应该为card id
         cards.push(new_card);
-        self.card_record.insert(account_id.to_string(), cards);
+        self.card_record.insert(&account_id, &cards);
         self.card_account_relation
-            .insert(account_id.to_string(), account_id.to_string()); // TODO 第二个参数应该为card id
+            .insert(&account_id, &account_id); // TODO 第二个参数应该为card id
 
         return true;
     }
@@ -212,12 +215,12 @@ impl BLCardService {
 
     // 通过 template 查询创建人
     pub fn find_account_by_template(&self, template_id: String) -> Option<String> {
-        self.template_account_relation.get(&template_id).cloned()
+        self.template_account_relation.get(&template_id)
     }
 
     // 通过 card 查询创建人
     pub fn find_account_by_card(&self, card_id: String) -> Option<String> {
-        self.card_account_relation.get(&card_id).cloned()
+        self.card_account_relation.get(&card_id)
     }
 
     // 创建联系人
@@ -225,13 +228,19 @@ impl BLCardService {
         let account_id = env::signer_account_id();
         let mut contact_person_vec: Vec<ContactPerson> = Vec::new();
 
-        if self.contract_person.contains_key(&account_id) {
-            contact_person_vec = self.contract_person.get(&account_id).unwrap().to_vec();
+        if let Some(list) = self.contract_person.get(&account_id) {
+            contact_person_vec = list.to_vec();
         }
 
-        let new_contract_person = ContactPerson::new(contact_person.to_string(), contact_person.to_string(), contact_person_vec.len() as u64 + 1, duration); // TODO 第一个参数应该生成；第三个参数应该去查询已经收到的数量
+        let new_contract_person = ContactPerson::new(
+            contact_person.to_string(),
+            contact_person.to_string(),
+            contact_person_vec.len() as u64 + 1,
+            duration,
+        ); // TODO 第一个参数应该生成；第三个参数应该去查询已经收到的数量
         contact_person_vec.push(new_contract_person);
-        self.contract_person.insert(account_id.to_string(), contact_person_vec);
+        self.contract_person
+            .insert(&account_id, &contact_person_vec);
         return true;
     }
 
@@ -243,7 +252,10 @@ impl BLCardService {
         for item in list.iter() {
             let mut temp_map: HashMap<String, String> = HashMap::new();
             temp_map.insert(String::from("id"), item.id.to_string());
-            temp_map.insert(String::from("contact_person"), item.contact_person.to_string());
+            temp_map.insert(
+                String::from("contact_person"),
+                item.contact_person.to_string(),
+            );
             temp_map.insert(String::from("card_count"), format!("{}", item.card_count));
             temp_map.insert(String::from("duration"), format!("{}", item.duration));
 
@@ -323,3 +335,5 @@ mod tests {
         // }
     }
 }
+
+// 创建联系人缺少为发卡人创建过程；创建卡片暂时不存在为指定人创建；扫描卡片未实现（扫描后数量减少或记录）；
