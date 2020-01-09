@@ -41,7 +41,8 @@ async function InitContract() {
       "getCardInfo",
       "listContract",
       "createContract",
-      "list_card"
+      "list_card",
+      "create_card"
     ],
     // Sender is the account ID to initialize transactions.
     sender: window.accountId

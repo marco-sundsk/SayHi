@@ -29,23 +29,28 @@ $(document).ready(() => {
       let data = JSON.parse(res);
       console.log(data);
       let html = "";
-      data.forEach(element => {
-        html += `<div class="one-contacts">
+      data.forEach(({ userId, cardsNumber, cardList }) => {
+        let obj = cardList;
+        html += `<div class="one-contacts" data-cardList='${JSON.stringify(
+          cardList
+        )}' data-uid='${userId}'>
       <img src="./assets/images/userimg.png" class="user-img" />
-      <img src="./assets/images/send_user.png" class="contacts-send-btn" onclick="sendAction('${element.userId}')"/>
-      <div class="id">${element.userId}</div>
+      <img src="./assets/images/send_user.png" class="contacts-send-btn" onclick="sendAction('${userId}')"/>
+      <div class="id">${userId}</div>
       <div class="desc"></div>
       <div class="bottom">
         <div class="left">
           <div class="tit">收到的卡</div>
-          <div class="info">${element.cardsNumber}</div>
-        </div>
-        <div class="right">
+          <div class="info">${cardsNumber}</div>
+        </div>`;
+        if (cardList.length != 0) {
+          html += `<div class="right">
           <div class="tit">到期时间</div>
-          <div class="info">${element.date}</div>
-        </div>
-      </div>
-    </div>`;
+          <div class="info">${cardList[0].expirationDate}</div>
+        </div>`;
+        }
+        html += ` </div>
+        </div>`;
       });
       $(".list-wrapper").html(html);
       $(".close").click(() => {
@@ -55,6 +60,15 @@ $(document).ready(() => {
         $(".send-card-form").css({
           transform: "translateY(76vh)"
         });
+      });
+
+      $(".one-contacts").click(function() {
+        let cardList = $(this)[0].dataset.cardlist;
+        let uid = $(this)[0].dataset.uid;
+        if (cardList !== "[]") {
+          localStorage.setItem("cardList", cardList);
+          location.href = "./contactscard?uid=" + uid;
+        }
       });
     })
     .catch(err => {
