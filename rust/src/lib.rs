@@ -27,7 +27,7 @@ pub struct BLCardService {
 
     card_record: Map<String, Map<String, Card>>, // 外层 key 为账号信息，value 为名片信息，内层 key 为cardId，value 为card
     card_account_relation: Map<String, String>, // key 为名片唯一编号，value 为账号信息，用于反向查找
-    card_scan_result: Map<String, bool>,        // key 为  名片_扫描人 唯一编号，value 为是否
+    card_scan_result: Map<String, Card>,        // key 为  名片_扫描人 唯一编号，value 为是否
 
     contract_person: Map<String, Vec<ContactPerson>>, // key 为账号信息，value 为联系人列表
 }
@@ -44,16 +44,19 @@ impl BLCardService {
         }
 
         let current_block_index = env::block_index();
+        let random_seed = env::random_seed();
+        let id_str = random_seed.iter().map(|&c| {format!("{:x?}", c)}).collect::<String>();
+
         let new_template = Template::new(
-            name.to_string(),
+            id_str.to_string(),
             name.to_string(),
             current_block_index,
             duration,
-        ); // TODO 第一个参数应该为template id
+        );
         templates.push(new_template);
         self.template_record.insert(&account_id, &templates);
         self.template_account_relation
-            .insert(&account_id, &account_id); // TODO 第二个参数应该为template id
+            .insert(&id_str, &account_id);
 
         return true;
     }
@@ -86,10 +89,9 @@ impl BLCardService {
         count: u64,
         total: u64,
         duration: u64,
-        specify_account: String,
-    ) -> bool {
+        specify_account: String,) -> String {
         if card_type != 0 && card_type != 1 {
-            return false;
+            return "".to_string();
         }
         // 根据card_type判断为指定给某人的card或不定向
         // 给指定人发card，是否需要知道扫没扫描
@@ -102,9 +104,12 @@ impl BLCardService {
         }
 
         let current_block_index = env::block_index();
+        let random_seed = env::random_seed();
+        let id_str = random_seed.iter().map(|&c| {format!("{:x?}", c)}).collect::<String>();
+
         // 创建卡片
         let new_card = Card::new(
-            name.to_string(),
+            id_str.to_string(),
             template_id,
             card_type,
             public_message,
@@ -116,12 +121,12 @@ impl BLCardService {
             current_block_index,
             duration,
             specify_account,
-        ); // TODO 第一个参数应该为card id
+        );
 
-        cards.insert(&name, &new_card); // TODO 第一个参数应该为card id
+        cards.insert(&id_str, &new_card);
         self.card_record.insert(&account_id, &cards);
-        self.card_account_relation.insert(&name, &account_id); // TODO 第二个参数应该为card id
-        return true;
+        self.card_account_relation.insert(&id_str, &account_id);
+        return id_str;
     }
 
     // 列出指定账号的名片信息
@@ -179,24 +184,24 @@ impl BLCardService {
 
         // card_vec 为 car_obj 创建的所有卡片列表，在此卡片列表中查找卡片
         let card_map = self.card_record.get(&car_obj.unwrap()).unwrap();
-        let item = card_map.get(&card_id).unwrap();
-        if item.id == card_id {
-            if item.card_type == 1 && item.remaining_count == 0 {
+        let card_item = card_map.get(&card_id).unwrap();
+        if card_item.id == card_id {
+            if card_item.card_type == 1 && card_item.remaining_count == 0 {
                 // 不定向
                 return false;
             }
         }
 
+        let account_id = env::signer_account_id();
         let mut scan_result_key = String::from(&card_id);
         scan_result_key.push_str("_");
-        scan_result_key.push_str(&contact_person);
+        scan_result_key.push_str(&account_id);
 
         // 此处用于判断是否已经扫描过
         if let Some(_) = self.card_scan_result.get(&scan_result_key) {
             return false;
         }
 
-        let account_id = env::signer_account_id();
         let mut contact_person_vec: Vec<ContactPerson> = Vec::new();
 
         if let Some(list) = self.contract_person.get(&account_id) {
@@ -219,17 +224,20 @@ impl BLCardService {
             contact_person_vec.remove(temp_count);
         }
 
+        let random_seed = env::random_seed();
+        let id_str = random_seed.iter().map(|&c| {format!("{:x?}", c)}).collect::<String>();
+        
         let new_contract_person = ContactPerson::new(
-            contact_person.to_string(),
+            id_str.to_string(),
             contact_person.to_string(),
             old_card_count as u64 + 1,
             duration,
-        ); // TODO 第一个参数应该生成；第三个参数应该去查询已经收到的数量
+        );
 
         contact_person_vec.push(new_contract_person);
         self.contract_person
             .insert(&account_id, &contact_person_vec);
-        self.card_scan_result.insert(&scan_result_key, &true);
+        self.card_scan_result.insert(&scan_result_key, &card_item);
 
         return true;
     }
@@ -255,16 +263,18 @@ impl BLCardService {
             temp_count = temp_count + 1;
         }
 
-        if old_card_count != 0 {
+        if contact_person_vec.len() > temp_count {
             contact_person_vec.remove(temp_count);
         }
 
+        let random_seed = env::random_seed();
+        let id_str = random_seed.iter().map(|&c| {format!("{:x?}", c)}).collect::<String>();
         let new_contract_person = ContactPerson::new(
-            account_id.to_string(),
+            id_str.to_string(),
             account_id.to_string(),
             old_card_count as u64,
             duration,
-        ); // TODO 第一个参数应该生成；第三个参数应该去查询已经收到的数量
+        );
         contact_person_vec.push(new_contract_person);
         self.contract_person.insert(&sender, &contact_person_vec);
         return true;
@@ -282,13 +292,75 @@ impl BLCardService {
                     String::from("contact_person"),
                     item.contact_person.to_string(),
                 );
+
+                let mut need_key_section = String::from("_");
+                need_key_section.push_str(&account_id);
+                
+                // TODO 此处结构需要修改，此时为临时方式
+                let mut card_info = String::from("[{}");
+
+                for scan_item in self.card_scan_result.keys() {
+                    if scan_item.contains(&need_key_section.to_string()) {
+                        let scan_card_item: Card = self.card_scan_result.get(&scan_item).unwrap();
+                        card_info.push_str(",{");
+
+                        card_info.push_str("\"id\":");
+                        card_info.push_str("\"");
+                        card_info.push_str(&scan_card_item.id);
+                        card_info.push_str("\"");
+                        card_info.push(',');
+                        
+                        card_info.push_str("\"name\":");
+                        card_info.push_str("\"");
+                        card_info.push_str(&scan_card_item.name);
+                        card_info.push_str("\"");
+                        card_info.push(',');
+                        
+                        card_info.push_str("\"total\":");
+                        card_info.push_str("\"");
+                        card_info.push_str("10"); // TODO 需要获取红包总数
+                        card_info.push_str("\"");
+                        card_info.push(',');
+                        
+
+                        card_info.push_str("\"template_id\":");
+                        card_info.push_str("\"");
+                        card_info.push_str(&scan_card_item.template_id);
+                        card_info.push_str("\"");
+                        card_info.push(',');
+
+                        card_info.push_str("\"public_message\":");
+                        card_info.push_str("\"");
+                        card_info.push_str(&scan_card_item.public_message);
+                        card_info.push_str("\"");
+                        card_info.push(',');
+
+                        card_info.push_str("\"private_message\":");
+                        card_info.push_str("\"");
+                        card_info.push_str(&scan_card_item.private_message);
+                        card_info.push_str("\"");
+
+                        card_info.push('}');
+                    }
+                }
+
+                card_info.push(']');
+
                 temp_map.insert(String::from("card_count"), format!("{}", item.card_count));
+                temp_map.insert(String::from("card_list"), card_info);
                 temp_map.insert(String::from("duration"), format!("{}", item.duration));
                 temp.push(temp_map)
             }
 
             temp
         })
+    }
+
+    pub fn t(&self) -> String {
+        let random_seed = env::random_seed();
+        let id_str = random_seed.iter().map(|&c| {format!("{:x?}", c)}).collect::<String>();
+
+        id_str
     }
 }
 
@@ -366,11 +438,12 @@ mod tests {
         let context = get_context(vec![], false);
         testing_env!(context);
         let mut bl_card_service = BLCardService::default();
-        // contact_person: String,
-        // card_id: String,
-        // duration: u64,
-        let create_result = bl_card_service.create_contract_person_for_sender("sd4773342".to_string(), 100);
-        assert_eq!(create_result, true);
-        let list = bl_card_service.list_contract_person("sd4773342".to_string());
+        let result = bl_card_service.t();
+        let result_str = result.iter().map(|&c| {
+            // let temp = c as char;
+            format!("{:x?}", c)
+        }).collect::<String>();
+        assert_eq!(result_str, "ae4b3280e56e2faf83f414a6e3dabe9d5fbe18976544c05fed121accb85b53fc");
+
     }
 }
