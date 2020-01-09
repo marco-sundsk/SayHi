@@ -132,7 +132,7 @@ $(document).ready(() => {
       duration: date,
       specify_account: currentUser
     };
-    console.log(cardInfo);
+    // console.log(cardInfo);
     window.contract
       .create_card(cardInfo)
       .then(res => {
