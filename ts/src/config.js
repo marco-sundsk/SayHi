@@ -1,5 +1,5 @@
 (function() {
-    const CONTRACT_NAME = 'bl_card'; /* TODO: fill this in! */
+    const CONTRACT_NAME = 'bl_card_1'; /* TODO: fill this in! */
     const DEFAULT_ENV = 'development';
 
     function getConfig(env) {

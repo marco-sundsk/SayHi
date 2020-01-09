@@ -72,7 +72,7 @@ $(document).ready(() => {
           autoClose: 1500
         });
         loading.close();
-        console.log('====')
+        console.log("====");
         console.log(err);
       });
   };
@@ -88,63 +88,77 @@ $(document).ready(() => {
       $("#expirationDate").val(),
       $("#dateType").val()
     );
-    if (cardNameValue === "") {
-      $(document).dialog({
-        type: "notice",
-        infoText: "请填写卡片名称",
-        autoClose: 1500
-      });
-      return;
-    }
-    if (publicInfoValue === "") {
-      $(document).dialog({
-        type: "notice",
-        infoText: "请填写公开信息",
-        autoClose: 1500
-      });
-      return;
-    }
-    if (countValue === "") {
-      $(document).dialog({
-        type: "notice",
-        infoText: "请填写卡片数量",
-        autoClose: 1500
-      });
-      return;
-    }
-    if ($("#expirationDate").val() === "") {
-      $(document).dialog({
-        type: "notice",
-        infoText: "请填写过期时间",
-        autoClose: 1500
-      });
-      return;
-    }
+    // if (cardNameValue === "") {
+    //   $(document).dialog({
+    //     type: "notice",
+    //     infoText: "请填写卡片名称",
+    //     autoClose: 1500
+    //   });
+    //   return;
+    // }
+    // if (publicInfoValue === "") {
+    //   $(document).dialog({
+    //     type: "notice",
+    //     infoText: "请填写公开信息",
+    //     autoClose: 1500
+    //   });
+    //   return;
+    // }
+    // if (countValue === "") {
+    //   $(document).dialog({
+    //     type: "notice",
+    //     infoText: "请填写卡片数量",
+    //     autoClose: 1500
+    //   });
+    //   return;
+    // }
+    // if ($("#expirationDate").val() === "") {
+    //   $(document).dialog({
+    //     type: "notice",
+    //     infoText: "请填写过期时间",
+    //     autoClose: 1500
+    //   });
+    //   return;
+    // }
     let loading = $(document).dialog({
       type: "toast",
       infoIcon: "./assets/images/loading.gif",
       infoText: "正在加载中"
     });
     let cardCode = new Date().getTime().toString();
+    // let cardInfo = {
+    //   code: cardCode,
+    //   cardUser: window.accountId,
+    //   cardName: cardNameValue,
+    //   publicInfo: publicInfoValue,
+    //   privateInfo: privateInfoValue,
+    //   count: countValue,
+    //   isAvg: isAvgValue,
+    //   total: parseInt(totalValue).toFixed(2),
+    //   expirationDate: date
+    // };
     let cardInfo = {
-      code: cardCode,
-      cardUser: window.accountId,
-      cardName: cardNameValue,
-      publicInfo: publicInfoValue,
-      privateInfo: privateInfoValue,
-      count: countValue,
-      isAvg: isAvgValue,
-      total: parseInt(totalValue).toFixed(2),
-      expirationDate: date
+      // template_id: 'template_1',
+      // name: cardNameValue,
+      // public_message: publicInfoValue,
+      // private_message: privateInfoValue,
+      // count: countValue,
+      // isAvg: isAvgValue,
+      // total: parseInt(totalValue).toFixed(2),
+      // duration: date
+      template_id: "template_1",
+      public_message: "123",
+      private_message: "233",
+      name: "333",
+      count: 10,
+      is_avg: true,
+      total: 10,
+      duration: 100
     };
-    cardList.push(cardInfo);
-    let params = JSON.stringify(cardList);
+    // cardList.push(cardInfo);
+    // let params = JSON.stringify(cardList);
     window.contract
-      .createCard({
-        cardInfo: params,
-        cardCode: cardCode,
-        newCardInfo: JSON.stringify(cardInfo)
-      })
+      .create_card(cardInfo)
       .then(res => {
         if (res) {
           loading.close();
