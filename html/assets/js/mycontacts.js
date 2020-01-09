@@ -15,26 +15,28 @@ $(document).ready(() => {
       if (res) {
         let data = res;
         let html = "";
-        data.forEach(({ id, card_count, duration, card_list }) => {
-          html += `<div class="one-contacts" data-cardList='${card_list}' data-uid='${id}'>
+        data.forEach(
+          ({ contact_person, id, card_count, duration, card_list, name }) => {
+            html += `<div class="one-contacts" data-cardList='${card_list}' data-uid='${contact_person}'>
       <img src="./assets/images/userimg.png" class="user-img" />
-      <img src="./assets/images/send_user.png" class="contacts-send-btn" data-uid="${id}"/>
-      <div class="id">${id}</div>
+      <img src="./assets/images/send_user.png" class="contacts-send-btn" data-uid="${contact_person}"/>
+      <div class="id">${contact_person}</div>
       <div class="desc"></div>
       <div class="bottom">
         <div class="left">
           <div class="tit">收到的卡</div>
           <div class="info">${card_count}</div>
         </div>`;
-          // if (cardList.length != 0) {
-          html += `<div class="right">
+            // if (cardList.length != 0) {
+            html += `<div class="right">
           <div class="tit">到期时间</div>
           <div class="info">${duration}</div>
         </div>`;
-          // }
-          html += ` </div>
+            // }
+            html += ` </div>
         </div>`;
-        });
+          }
+        );
         $(".list-wrapper").html(html);
         $(".contacts-send-btn").click(function(e) {
           let uid = $(this)[0].dataset.uid;
@@ -130,7 +132,7 @@ $(document).ready(() => {
       duration: date,
       specify_account: currentUser
     };
-    // console.log(cardInfo);
+    console.log(cardInfo);
     window.contract
       .create_card(cardInfo)
       .then(res => {
@@ -144,7 +146,7 @@ $(document).ready(() => {
               // location.reload();
               location.href =
                 "./qrcode.html?cardcode=" +
-                cardNameValue +
+                res +
                 "&id=" +
                 window.accountId;
             }

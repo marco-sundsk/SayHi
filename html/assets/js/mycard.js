@@ -161,10 +161,11 @@ $(document).ready(() => {
       duration: date,
       specify_account: ""
     };
-    console.log(cardInfo);
+    // console.log(cardInfo);
     window.contract
       .create_card(cardInfo)
       .then(res => {
+        // console.log(res)
         if (res) {
           loading.close();
           $(document).dialog({
@@ -175,7 +176,7 @@ $(document).ready(() => {
               // location.reload();
               location.href =
                 "./qrcode.html?cardcode=" +
-                cardNameValue +
+                res +
                 "&id=" +
                 window.accountId;
             }
