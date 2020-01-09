@@ -163,7 +163,7 @@
 
                 // 安卓风格的点击水波纹
                 if (self.dislogStyle === 'android') {
-                    $('.dialog-content-ft > .dialog-btn').ripple();
+                    // $('.dialog-content-ft > .dialog-btn').ripple();
                 }
 
             },

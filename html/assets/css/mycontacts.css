@@ -1,7 +1,7 @@
 .mycontacts-warpper {
     width: 100%;
     min-height: 100vh;
-    background: url('../images/bg.png');
+    background: url('../images/bg.jpg');
     background-size: cover;
     background-size:contain;
     /* filter:blur(0.5px); */
