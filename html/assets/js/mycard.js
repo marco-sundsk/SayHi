@@ -50,7 +50,9 @@ $(document).ready(() => {
         </div>`;
             if (element.private_message) {
               html += `<div class="card-info">
-            <img src="./assets/images/card_name.png" />${BASE64.decode(element.private_message)}
+            <img src="./assets/images/card_name.png" />${BASE64.decode(
+              element.private_message
+            )}
           </div>`;
             }
             if (element.total) {
@@ -157,7 +159,7 @@ $(document).ready(() => {
       private_message: BASE64.encode(privateInfoValue), //暂时base64简单加密，之后使用公钥私钥加密解码
       count: parseInt(countValue),
       // isAvg: isAvgValue,
-      total: parseInt(totalValue),
+      total: parseInt(totalValue) ? parseInt(totalValue) : 0,
       duration: date,
       specify_account: ""
     };
@@ -175,10 +177,7 @@ $(document).ready(() => {
             onClosed: () => {
               // location.reload();
               location.href =
-                "./qrcode.html?cardcode=" +
-                res +
-                "&id=" +
-                window.accountId;
+                "./qrcode.html?cardcode=" + res + "&id=" + window.accountId;
             }
           });
           setTimeout(() => {
