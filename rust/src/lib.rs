@@ -45,7 +45,10 @@ impl BLCardService {
 
         let current_block_index = env::block_index();
         let random_seed = env::random_seed();
-        let id_str = random_seed.iter().map(|&c| {format!("{:x?}", c)}).collect::<String>();
+        let id_str = random_seed
+            .iter()
+            .map(|&c| format!("{:x?}", c))
+            .collect::<String>();
 
         let new_template = Template::new(
             id_str.to_string(),
@@ -55,8 +58,7 @@ impl BLCardService {
         );
         templates.push(new_template);
         self.template_record.insert(&account_id, &templates);
-        self.template_account_relation
-            .insert(&id_str, &account_id);
+        self.template_account_relation.insert(&id_str, &account_id);
 
         return true;
     }
@@ -89,44 +91,55 @@ impl BLCardService {
         count: u64,
         total: u64,
         duration: u64,
-        specify_account: String,) -> String {
+        specify_account: String,
+    ) -> String {
         if card_type != 0 && card_type != 1 {
             return "".to_string();
         }
-        // 根据card_type判断为指定给某人的card或不定向
-        // 给指定人发card，是否需要知道扫没扫描
-        // 给指定人发card前，发送人联系人列表里有接收人，接收人列表里有发送人嘛，还是一定要等接收人扫了才会有
-        let account_id = env::signer_account_id();
-        let mut cards: Map<String, Card> = Map::default();
 
-        if let Some(map) = self.card_record.get(&account_id) {
-            cards = map;
+        let account_id = env::signer_account_id();
+
+        if let None = self.card_record.get(&account_id) {
+            self.card_record.insert(&account_id, &Map::default());
+            env::log("create new entry".as_bytes());
         }
 
-        let current_block_index = env::block_index();
-        let random_seed = env::random_seed();
-        let id_str = random_seed.iter().map(|&c| {format!("{:x?}", c)}).collect::<String>();
+        // let mut cards: Map<String, Card> = Map::default();
 
-        // 创建卡片
-        let new_card = Card::new(
-            id_str.to_string(),
-            template_id,
-            card_type,
-            public_message,
-            private_message,
-            name.to_string(),
-            count,
-            true,
-            total,
-            current_block_index,
-            duration,
-            specify_account,
-        );
+        if let Some(mut map) = self.card_record.get(&account_id) {
+            let current_block_index = env::block_index();
+            let random_seed = env::random_seed();
+            let id_str = random_seed
+                .iter()
+                .map(|&c| format!("{:x?}", c))
+                .collect::<String>();
 
-        cards.insert(&id_str, &new_card);
-        self.card_record.insert(&account_id, &cards);
-        self.card_account_relation.insert(&id_str, &account_id);
-        return id_str;
+            // 创建卡片
+            let new_card = Card::new(
+                id_str.to_string(),
+                template_id,
+                card_type,
+                public_message,
+                private_message,
+                name.to_string(),
+                count,
+                true,
+                total,
+                current_block_index,
+                duration,
+                specify_account,
+            );
+
+            map.insert(&id_str, &new_card);
+            env::log("insert new value".as_bytes());
+            self.card_account_relation.insert(&id_str, &account_id);
+            return id_str;
+            // self.card_record.insert(&account_id)
+            // self.card_record.insert(&account_id, &cards);
+        }
+        
+        
+        return "".to_string();
     }
 
     // 列出指定账号的名片信息
@@ -173,7 +186,8 @@ impl BLCardService {
         &mut self,
         contact_person: String,
         card_id: String,
-        duration: u64,) -> bool {
+        duration: u64,
+    ) -> bool {
         // 1、判断卡是否存在；2、判断是否是不定向卡片
         let car_obj = self.card_account_relation.get(&card_id); // car_obj 值为创建人
 
@@ -225,8 +239,10 @@ impl BLCardService {
         }
 
         let random_seed = env::random_seed();
-        let id_str = random_seed.iter().map(|&c| {format!("{:x?}", c)}).collect::<String>();
-        
+        let id_str = random_seed
+            .iter()
+            .map(|&c| format!("{:x?}", c))
+            .collect::<String>();
         let new_contract_person = ContactPerson::new(
             id_str.to_string(),
             contact_person.to_string(),
@@ -268,7 +284,10 @@ impl BLCardService {
         }
 
         let random_seed = env::random_seed();
-        let id_str = random_seed.iter().map(|&c| {format!("{:x?}", c)}).collect::<String>();
+        let id_str = random_seed
+            .iter()
+            .map(|&c| format!("{:x?}", c))
+            .collect::<String>();
         let new_contract_person = ContactPerson::new(
             id_str.to_string(),
             account_id.to_string(),
@@ -295,7 +314,6 @@ impl BLCardService {
 
                 let mut need_key_section = String::from("_");
                 need_key_section.push_str(&account_id);
-                
                 // TODO 此处结构需要修改，此时为临时方式
                 let mut card_info = String::from("[{}");
 
@@ -309,19 +327,16 @@ impl BLCardService {
                         card_info.push_str(&scan_card_item.id);
                         card_info.push_str("\"");
                         card_info.push(',');
-                        
                         card_info.push_str("\"name\":");
                         card_info.push_str("\"");
                         card_info.push_str(&scan_card_item.name);
                         card_info.push_str("\"");
                         card_info.push(',');
-                        
                         card_info.push_str("\"total\":");
                         card_info.push_str("\"");
                         card_info.push_str("10"); // TODO 需要获取红包总数
                         card_info.push_str("\"");
                         card_info.push(',');
-                        
 
                         card_info.push_str("\"template_id\":");
                         card_info.push_str("\"");
@@ -358,7 +373,10 @@ impl BLCardService {
 
     pub fn t(&self) -> String {
         let random_seed = env::random_seed();
-        let id_str = random_seed.iter().map(|&c| {format!("{:x?}", c)}).collect::<String>();
+        let id_str = random_seed
+            .iter()
+            .map(|&c| format!("{:x?}", c))
+            .collect::<String>();
 
         id_str
     }
@@ -416,15 +434,19 @@ mod tests {
 
         let _card_name = String::from("new card 1");
 
-        // let mut bl_card_service = BLCardService::default();
+        let mut bl_card_service = BLCardService::default();
         // let create_result = bl_card_service.create_card(
+        //     "template_id".to_string(),
+        //     0,
         //     "".to_string(),
         //     "".to_string(),
         //     "".to_string(),
-        //     _card_name.to_string(),
+        //     1,
+        //     1,
         //     100,
+        //     "".to_string(),
         // );
-        // assert_eq!(create_result, true);
+        // assert_eq!(create_result, "true");
         // let _templates = bl_card_service.list_card("bob_near".to_string());
 
         // match _templates {
@@ -435,15 +457,20 @@ mod tests {
 
     #[test]
     fn test_contract_person() {
-        let context = get_context(vec![], false);
-        testing_env!(context);
-        let mut bl_card_service = BLCardService::default();
-        let result = bl_card_service.t();
-        let result_str = result.iter().map(|&c| {
-            // let temp = c as char;
-            format!("{:x?}", c)
-        }).collect::<String>();
-        assert_eq!(result_str, "ae4b3280e56e2faf83f414a6e3dabe9d5fbe18976544c05fed121accb85b53fc");
-
+        // let context = get_context(vec![], false);
+        // testing_env!(context);
+        // let mut bl_card_service = BLCardService::default();
+        // let result = bl_card_service.t();
+        // let result_str = result
+        //     .iter()
+        //     .map(|&c| {
+        //         // let temp = c as char;
+        //         format!("{:x?}", c)
+        //     })
+        //     .collect::<String>();
+        // assert_eq!(
+        //     result_str,
+        //     "ae4b3280e56e2faf83f414a6e3dabe9d5fbe18976544c05fed121accb85b53fc"
+        // );
     }
 }
