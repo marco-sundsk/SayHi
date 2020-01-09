@@ -214,7 +214,11 @@ impl BLCardService {
             }
             temp_count = temp_count + 1;
         }
-        contact_person_vec.remove(temp_count);
+
+        if old_card_count != 0 {
+            contact_person_vec.remove(temp_count);
+        }
+
         let new_contract_person = ContactPerson::new(
             contact_person.to_string(),
             contact_person.to_string(),
@@ -250,7 +254,11 @@ impl BLCardService {
             }
             temp_count = temp_count + 1;
         }
-        contact_person_vec.remove(temp_count);
+
+        if old_card_count != 0 {
+            contact_person_vec.remove(temp_count);
+        }
+
         let new_contract_person = ContactPerson::new(
             account_id.to_string(),
             account_id.to_string(),
@@ -351,5 +359,18 @@ mod tests {
         //     None => assert_eq!(1, 1),
         //     Some(_temp) => assert_eq!(_temp.len(), 1),
         // }
+    }
+
+    #[test]
+    fn test_contract_person() {
+        let context = get_context(vec![], false);
+        testing_env!(context);
+        let mut bl_card_service = BLCardService::default();
+        // contact_person: String,
+        // card_id: String,
+        // duration: u64,
+        let create_result = bl_card_service.create_contract_person_for_sender("sd4773342".to_string(), 100);
+        assert_eq!(create_result, true);
+        let list = bl_card_service.list_contract_person("sd4773342".to_string());
     }
 }
