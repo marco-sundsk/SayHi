@@ -3,26 +3,29 @@ $(document).ready(() => {
     history.back();
   });
   let cardcode = GetUrlString("cardcode");
-  let loading = $(document).dialog({
-    type: "toast",
-    infoIcon: "./assets/images/loading.gif",
-    infoText: "正在加载中"
-  });
-  window.contract.getCardInfo({ cardCode: cardcode }).then(res => {
-    loading.close();
-    let data = JSON.parse(res);
-    $(".title").html(data.cardName);
-    $(".name").html(data.cardUser);
-    $("#public").html(data.publicInfo);
-    if (data.privateInfo) {
-      $("#private").html(data.privateInfo);
-    } else {
-      $("#privateWrap").hide();
-    }
-    if (data.count) {
-      $("#red").html(data.count);
-    } else {
-      $(".red-bag").hide();
-    }
-  });
+  window.contract
+    .find_account_by_card({
+      card_id: cardcode
+    })
+    .then(res => {
+      $(".name").html(res);
+    })
+    .catch(err => {
+      loading.close();
+      console.log(err);
+    });
+  let cardinfo = localStorage.getItem("cardinfo");
+  let data = JSON.parse(cardinfo);
+  $(".title").html(data.name);
+  $("#public").html(data.public_message);
+  if (data.private_message) {
+    $("#private").html(BASE64.decode(data.private_message));
+  } else {
+    $("#privateWrap").hide();
+  }
+  if (data.total) {
+    $("#red").html(parseInt(data.total).toFixed(2));
+  } else {
+    $(".red-bag").hide();
+  }
 });

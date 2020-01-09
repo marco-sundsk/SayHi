@@ -1,6 +1,4 @@
 $(document).ready(() => {
-  let cardList = [];
-
   $(".user-name").html(window.accountId);
   $(".add-icon").click(() => {
     $(".send-card-form").show(0, () => {
@@ -30,49 +28,74 @@ $(document).ready(() => {
       infoIcon: "./assets/images/loading.gif",
       infoText: "正在加载中"
     });
+    // console.log(window.accountId)
+    let w = window;
     window.contract
-      .list_template({
+      .list_card({
         account_id: window.accountId
       })
       .then(res => {
         loading.close();
-        cardList = JSON.parse(res);
-        let html = "";
-        cardList.forEach(element => {
-          html += `<div class="swiper-slide" onclick="gotoDetail(${element.code})">
-        <div class="card-name">${element.cardName}</div>
+        // console.log(res)
+        if (res) {
+          let html = "";
+          res.forEach(element => {
+            html += `<div class="swiper-slide" data-cardInfo='${JSON.stringify(
+              element
+            )}' >
+        <div class="card-name">${element.name}</div>
         <div class="id">${window.accountId}</div>
         <div class="card-info">
-          <img src="./assets/images/card_number.png" />${element.publicInfo}
+          <img src="./assets/images/card_number.png" />${element.public_message}
         </div>`;
-          if (element.privateInfo) {
-            html += `<div class="card-info">
-            <img src="./assets/images/card_name.png" />${element.privateInfo}
+            if (element.private_message) {
+              html += `<div class="card-info">
+            <img src="./assets/images/card_name.png" />${BASE64.decode(element.private_message)}
           </div>`;
-          }
-          if (element.total) {
-            html += `<div class="red-bag">
-            <img src="./assets/images/red2.png" />${element.total}
+            }
+            if (element.total) {
+              html += `<div class="red-bag">
+            <img src="./assets/images/red2.png" />${parseInt(
+              element.total
+            ).toFixed(2)}
           </div>`;
-          }
-          html += `</div>`;
-        });
-        $(".swiper-wrapper").html(html);
-        new Swiper(".card-container", {
-          slidesPerView: 1.6,
-          spaceBetween: 0,
-          centeredSlides: true,
-          loop: false
-        });
+            }
+            html += `<div class="qrcode" data-id="${element.id}">
+            <img src="./assets/images/qrcodes.png" />查看
+          </div></div>`;
+          });
+          $(".swiper-wrapper").html(html);
+
+          $(".swiper-slide").click(function() {
+            let cardinfo = $(this)[0].dataset.cardinfo;
+            localStorage.setItem("cardinfo", cardinfo);
+            let cardinfoObj = JSON.parse(cardinfo);
+            location.href = "./carddetail.html?cardcode=" + cardinfoObj.id;
+          });
+
+          $(".qrcode").click(function(e) {
+            e.stopPropagation();
+            let id = $(this)[0].dataset.id;
+            location.href =
+              "./qrcode.html?cardcode=" + id + "&id=" + window.accountId;
+          });
+
+          new Swiper(".card-container", {
+            slidesPerView: 1.6,
+            spaceBetween: 0,
+            centeredSlides: true,
+            loop: false
+          });
+        } else {
+          $(document).dialog({
+            type: "notice",
+            infoText: "没有卡片",
+            autoClose: 1500
+          });
+        }
       })
       .catch(err => {
-        $(document).dialog({
-          type: "notice",
-          infoText: "没有卡片",
-          autoClose: 1500
-        });
         loading.close();
-        console.log("====");
         console.log(err);
       });
   };
@@ -88,75 +111,57 @@ $(document).ready(() => {
       $("#expirationDate").val(),
       $("#dateType").val()
     );
-    // if (cardNameValue === "") {
-    //   $(document).dialog({
-    //     type: "notice",
-    //     infoText: "请填写卡片名称",
-    //     autoClose: 1500
-    //   });
-    //   return;
-    // }
-    // if (publicInfoValue === "") {
-    //   $(document).dialog({
-    //     type: "notice",
-    //     infoText: "请填写公开信息",
-    //     autoClose: 1500
-    //   });
-    //   return;
-    // }
-    // if (countValue === "") {
-    //   $(document).dialog({
-    //     type: "notice",
-    //     infoText: "请填写卡片数量",
-    //     autoClose: 1500
-    //   });
-    //   return;
-    // }
-    // if ($("#expirationDate").val() === "") {
-    //   $(document).dialog({
-    //     type: "notice",
-    //     infoText: "请填写过期时间",
-    //     autoClose: 1500
-    //   });
-    //   return;
-    // }
+    if (cardNameValue === "") {
+      $(document).dialog({
+        type: "notice",
+        infoText: "请填写卡片名称",
+        autoClose: 1500
+      });
+      return;
+    }
+    if (publicInfoValue === "") {
+      $(document).dialog({
+        type: "notice",
+        infoText: "请填写公开信息",
+        autoClose: 1500
+      });
+      return;
+    }
+    if (countValue === "") {
+      $(document).dialog({
+        type: "notice",
+        infoText: "请填写卡片数量",
+        autoClose: 1500
+      });
+      return;
+    }
+    if ($("#expirationDate").val() === "") {
+      $(document).dialog({
+        type: "notice",
+        infoText: "请填写过期时间",
+        autoClose: 1500
+      });
+      return;
+    }
     let loading = $(document).dialog({
       type: "toast",
       infoIcon: "./assets/images/loading.gif",
       infoText: "正在加载中"
     });
     let cardCode = new Date().getTime().toString();
-    // let cardInfo = {
-    //   code: cardCode,
-    //   cardUser: window.accountId,
-    //   cardName: cardNameValue,
-    //   publicInfo: publicInfoValue,
-    //   privateInfo: privateInfoValue,
-    //   count: countValue,
-    //   isAvg: isAvgValue,
-    //   total: parseInt(totalValue).toFixed(2),
-    //   expirationDate: date
-    // };
     let cardInfo = {
-      // template_id: 'template_1',
-      // name: cardNameValue,
-      // public_message: publicInfoValue,
-      // private_message: privateInfoValue,
-      // count: countValue,
-      // isAvg: isAvgValue,
-      // total: parseInt(totalValue).toFixed(2),
-      // duration: date
+      card_type: 0,
       template_id: "template_1",
-      public_message: "123",
-      private_message: "233",
-      name: "333",
-      count: 10,
-      is_avg: true,
-      total: 10,
-      duration: 100
+      name: cardNameValue,
+      public_message: publicInfoValue,
+      private_message: BASE64.encode(privateInfoValue), //暂时base64简单加密，之后使用公钥私钥加密解码
+      count: parseInt(countValue),
+      // isAvg: isAvgValue,
+      total: parseInt(totalValue),
+      duration: date,
+      specify_account: ""
     };
-    // cardList.push(cardInfo);
-    // let params = JSON.stringify(cardList);
+    console.log(cardInfo);
     window.contract
       .create_card(cardInfo)
       .then(res => {
@@ -169,7 +174,10 @@ $(document).ready(() => {
             onClosed: () => {
               // location.reload();
               location.href =
-                "./qrcode?cardcode=" + cardCode + "&id=" + window.accountId;
+                "./qrcode.html?cardcode=" +
+                cardNameValue +
+                "&id=" +
+                window.accountId;
             }
           });
           setTimeout(() => {
@@ -218,8 +226,4 @@ let getExpirationDate = (number, type) => {
       return (year * number) / 2;
       break;
   }
-};
-
-let gotoDetail = code => {
-  location.href = "./carddetail?cardcode=" + code;
 };

@@ -232,3 +232,20 @@
       margin-left: -22.5px;
       bottom: 4vh;
   }
+
+  .qrcode {
+    color:#fff;
+    font-size: 13px;
+    display: flex;
+    position: absolute;
+    bottom: 10px;
+    left: 20px;
+    height: 25px;
+    align-items: center;
+  }
+
+  .qrcode img {
+      width: 15px;
+      height: 15px;
+      margin-right: 5px;
+  }

@@ -106,7 +106,7 @@
 		try {
 			return element.getBoundingClientRect();            
         } catch(error) {
-            console.log('No support getBoundingClientRect', error.message);
+            // console.log('No support getBoundingClientRect', error.message);
         }
 	}
 

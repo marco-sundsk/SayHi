@@ -1,4 +1,5 @@
 $(document).ready(() => {
+  let currentUser = "";
   let loading = $(document).dialog({
     type: "toast",
     infoIcon: "./assets/images/loading.gif",
@@ -8,61 +9,72 @@ $(document).ready(() => {
     history.back();
   });
 
-  let getMyCardList = () => {
-    window.contract
-      .listCard()
-      .then(res => {
-        loading.close();
-        cardList = JSON.parse(res);
-        // console.log(cardList);
-      })
-      .catch(err => {
-        loading.close();
-        console.log(err);
-      });
-  };
-
   listContractAction()
     .then(res => {
-      getMyCardList();
-      let data = JSON.parse(res);
-      console.log(data)
-      let html = "";
-      data.forEach(element => {
-        html += `<div class="one-contacts">
+      // console.log(res);
+      if (res) {
+        let data = res;
+        let html = "";
+        data.forEach(({ id, card_count, duration, card_list }) => {
+          html += `<div class="one-contacts" data-cardList='${card_list}' data-uid='${id}'>
       <img src="./assets/images/userimg.png" class="user-img" />
-      <img src="./assets/images/send_user.png" class="contacts-send-btn" onclick="sendAction('${element.userId}')"/>
-      <div class="id">${element.userId}</div>
+      <img src="./assets/images/send_user.png" class="contacts-send-btn" data-uid="${id}"/>
+      <div class="id">${id}</div>
       <div class="desc"></div>
       <div class="bottom">
         <div class="left">
           <div class="tit">收到的卡</div>
-          <div class="info">${element.cardsNumber}</div>
-        </div>
-        <div class="right">
+          <div class="info">${card_count}</div>
+        </div>`;
+          // if (cardList.length != 0) {
+          html += `<div class="right">
           <div class="tit">到期时间</div>
-          <div class="info">${element.date}</div>
-        </div>
-      </div>
-    </div>`;
-      });
-      $(".list-wrapper").html(html);
-      $(".close").click(() => {
-        setTimeout(() => {
-          $(".send-card-form").hide();
-        }, 500);
-        $(".send-card-form").css({
-          transform: "translateY(76vh)"
+          <div class="info">${duration}</div>
+        </div>`;
+          // }
+          html += ` </div>
+        </div>`;
         });
-      });
+        $(".list-wrapper").html(html);
+        $(".contacts-send-btn").click(function(e) {
+          let uid = $(this)[0].dataset.uid;
+          $(".name").html(uid);
+          currentUser = uid;
+          $(".send-card-form").show(0, () => {
+            $(".send-card-form").css({
+              transform: "translateY(0vh)"
+            });
+          });
+          e.stopPropagation();
+        });
+        $(".close").click(() => {
+          setTimeout(() => {
+            $(".send-card-form").hide();
+          }, 500);
+          $(".send-card-form").css({
+            transform: "translateY(76vh)"
+          });
+        });
+        $(".one-contacts").click(function(e) {
+          let cardList = $(this)[0].dataset.cardlist;
+          let uid = $(this)[0].dataset.uid;
+          // console.log(cardList);
+          if (cardList !== "[{}]") {
+            localStorage.setItem("cardList", cardList);
+            location.href = "./contactscard.html?uid=" + uid;
+          }
+        });
+        loading.close();
+      } else {
+        loading.close();
+        $(document).dialog({
+          type: "notice",
+          infoText: "没有联系人",
+          autoClose: 1500
+        });
+      }
     })
     .catch(err => {
-      loading.close();
-      $(document).dialog({
-        type: "notice",
-        infoText: "没有联系人",
-        autoClose: 1500
-      });
       console.log(err);
     });
 
@@ -106,26 +118,21 @@ $(document).ready(() => {
       infoIcon: "./assets/images/loading.gif",
       infoText: "正在加载中"
     });
-    let cardCode = new Date().getTime().toString();
     let cardInfo = {
-      code: cardCode,
-      cardUser: window.accountId,
-      cardName: cardNameValue,
-      publicInfo: publicInfoValue,
-      privateInfo: privateInfoValue,
-      count: countValue,
-      isAvg: isAvgValue,
-      total: parseInt(totalValue).toFixed(2),
-      expirationDate: date
+      card_type: 0,
+      template_id: "template_1",
+      name: cardNameValue,
+      public_message: publicInfoValue,
+      private_message: BASE64.encode(privateInfoValue), //暂时base64简单加密，之后使用公钥私钥加密解码
+      count: 1,
+      // isAvg: isAvgValue,
+      total: parseInt(totalValue),
+      duration: date,
+      specify_account: currentUser
     };
-    cardList.push(cardInfo);
-    let params = JSON.stringify(cardList);
+    // console.log(cardInfo);
     window.contract
-      .createCard({
-        cardInfo: params,
-        cardCode: cardCode,
-        newCardInfo: JSON.stringify(cardInfo)
-      })
+      .create_card(cardInfo)
       .then(res => {
         if (res) {
           loading.close();
@@ -136,7 +143,10 @@ $(document).ready(() => {
             onClosed: () => {
               // location.reload();
               location.href =
-                "./qrcode?cardcode=" + cardCode + "&id=" + window.accountId;
+                "./qrcode.html?cardcode=" +
+                cardNameValue +
+                "&id=" +
+                window.accountId;
             }
           });
         } else {
@@ -160,17 +170,11 @@ $(document).ready(() => {
 });
 
 async function listContractAction() {
-  return window.contract.listContract();
-}
-
-let sendAction = id => {
-  $("#name").html(id);
-  $(".send-card-form").show(0, () => {
-    $(".send-card-form").css({
-      transform: "translateY(0vh)"
-    });
+  // console.log("account_id：" + window.accountId);
+  return window.contract.list_contract_person({
+    account_id: window.accountId
   });
-};
+}
 
 let getExpirationDate = (number, type) => {
   switch (type) {

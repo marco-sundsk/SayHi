@@ -8,7 +8,7 @@ let userInfo = {
   cardList: []
 };
 async function InitContract() {
-  console.log("nearConfig", nearConfig);
+  // console.log("nearConfig", nearConfig);
 
   // Initializing connection to the NEAR DevNet.
   window.near = await nearlib.connect(
@@ -32,17 +32,12 @@ async function InitContract() {
     // eslint-disable-line require-atomic-updates
     // NOTE: This configuration only needed while NEAR is still in development
     // View methods are read only. They don't modify the state, but usually return some value.
-    viewMethods: ["welcome", "listTemplate", "hello", "list_template"],
+    viewMethods: ["list_card", "find_account_by_card", "list_contract_person"],
     // Change methods can modify the state. But you don't receive the returned value when called.
     changeMethods: [
-      "createTemplate",
-      "createCard",
-      "listCard",
-      "getCardInfo",
-      "listContract",
-      "createContract",
-      "list_card",
-      "create_card"
+      "create_card",
+      "create_contract_person",
+      "create_contract_person_for_sender"
     ],
     // Sender is the account ID to initialize transactions.
     sender: window.accountId
@@ -56,7 +51,7 @@ async function doWork() {
     if (location.pathname !== "/") {
       location.href = "/";
     }
-    console.log("未登录");
+    // console.log("未登录");
   } else {
     if (location.pathname == "/") {
       if (GetUrlString("cardcode") !== "null") {
@@ -88,84 +83,33 @@ function GetUrlString(param) {
   return sValue ? decodeURI(sValue[1]) : decodeURI(sValue);
 }
 
-function relationContacts() {
+async function relationContacts() {
   let loading = $(document).dialog({
     type: "toast",
     infoIcon: "./assets/images/loading.gif",
     infoText: "正在加载中"
   });
-  let acceptUserId = window.accountId;
-  // console.log(acceptUserId);
   let cardcode = GetUrlString("cardcode");
-  // console.log(cardcode);
-
-  window.contract.getCardInfo({ cardCode: cardcode }).then(res => {
-    let cardInfo = JSON.parse(res);
-    let sendUserId = cardInfo.cardUser;
-    listContractAction(sendUserId)
-      .then(res => {
-        if (res) {
-          // console.log("发送卡片的人的联系人");
-          // console.log(JSON.parse(res));
-          acceptUserContacts = JSON.parse(res);
-        }
-        listContractAction(acceptUserId)
-          .then(res => {
-            if (res) {
-              // console.log("接受卡片的人的联系人");
-              // console.log(JSON.parse(res));
-              sendUserContacts = JSON.parse(res);
-            }
-            let isHasSendUser = sendUserContacts.some(ele => {
-              if (ele.userId == sendUserId) {
-                ele.cardsNumber = ++ele.cardsNumber;
-                ele.cardList.push(cardInfo);
-              }
-              return (ele.userId = sendUserId);
-            });
-            let isHasAcceptUser = acceptUserContacts.some(ele => {
-              return (ele.userId = acceptUserId);
-            });
-            // console.log("是否存在发送的人" + isHasSendUser);
-            // console.log("是否存在接受的人" + isHasAcceptUser);
-            if (isHasSendUser) {
-            } else {
-              let acceptUserInfo = clone(userInfo);
-              acceptUserInfo.userId = acceptUserId;
-              acceptUserContacts.push(acceptUserInfo);
-            }
-            if (isHasAcceptUser) {
-            } else {
-              let sendUserInfo = clone(userInfo);
-              sendUserInfo.userId = sendUserId;
-              sendUserInfo.cardsNumber = ++sendUserInfo.cardsNumber;
-              sendUserInfo.cardList.push(cardInfo);
-              sendUserContacts.push(sendUserInfo);
-            }
-            // console.log(JSON.stringify(acceptUserContacts));
-            // console.log(sendUserId);
-            // console.log(JSON.stringify(sendUserContacts));
-            createContractAction(
-              JSON.stringify(sendUserContacts),
-              sendUserId,
-              JSON.stringify(acceptUserContacts)
-            )
-              .then(res => {
-                loading.close();
-                location.href = "./mycard.html";
-              })
-              .catch(err => {
-                console.log(err);
-              });
-          })
-          .catch(err => {
-            console.log(err);
-          });
-      })
-      .catch(err => {
-        console.log(err);
-      });
-  });
+  let sender = await listContractPerson(cardcode);
+  // console.log(sender);
+  await createContractPersonAciton(sender, cardcode)
+    .then(res => {
+      // console.log(res);
+    })
+    .catch(err => {
+      loading.close();
+      console.log("扫卡人创建联系人：" + err);
+    });
+  await createContractPersonForSenderAction(sender)
+    .then(res => {
+      loading.close();
+      // console.log(res);
+      location.href = "./mycard.html";
+    })
+    .catch(err => {
+      loading.close();
+      console.log("扫描人为发卡人创建联系人：" + err);
+    });
 }
 
 async function listContractAction(id) {
@@ -191,3 +135,50 @@ function clone(target) {
     return target;
   }
 }
+
+function createContractPersonForSenderAction(sender, duration = 1000000) {
+  // console.log("sender：" + sender);
+  // console.log("duration：" + duration);
+  return window.contract.create_contract_person_for_sender({
+    sender: sender,
+    duration: duration
+  });
+}
+
+function createContractPersonAciton(sender, cardid, duration = 1000000) {
+  // console.log("contact_person：" + sender);
+  // console.log("card_id：" + cardid);
+  // console.log("duration：" + duration);
+  return window.contract.create_contract_person({
+    contact_person: sender,
+    card_id: cardid,
+    duration: duration
+  });
+}
+
+function listContractPerson(cardid) {
+  return new Promise((resolve, reject) => {
+    window.contract
+      .find_account_by_card({
+        card_id: cardid
+      })
+      .then(res => {
+        resolve(res);
+      })
+      .catch(err => {
+        loading.close();
+        console.log(err);
+      });
+  });
+}
+
+window.addEventListener('pageshow', function(event) {
+  if(event.persisted) {
+   location.reload();
+  } else { 
+   if(sessionStorage.getItem('refresh') === 'true') {
+    location.reload();
+   }
+  }
+  sessionStorage.removeItem('refresh');
+ });
