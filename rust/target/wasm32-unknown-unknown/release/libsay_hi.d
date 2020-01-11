@@ -1,1 +1,0 @@
-/Users/haosun/projects/learn-near/SayHi/rust/target/wasm32-unknown-unknown/release/libsay_hi.rlib: /Users/haosun/projects/learn-near/SayHi/rust/src/lib.rs /Users/haosun/projects/learn-near/SayHi/rust/src/model.rs
