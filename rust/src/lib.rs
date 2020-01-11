@@ -35,7 +35,7 @@ pub struct BLCardService {
 #[near_bindgen]
 impl BLCardService {
     // 创建模板
-    pub fn create_template(&mut self, name: String, duration: u64) -> bool {
+    pub fn create_template(&mut self, name: &String, content: &String, duration: u64) -> bool {
         let account_id = env::signer_account_id();
         let mut templates: Vec<Template> = Vec::new();
 
@@ -51,8 +51,9 @@ impl BLCardService {
             .collect::<String>();
 
         let new_template = Template::new(
-            id_str.to_string(),
-            name.to_string(),
+            &id_str,
+            name,
+            content,
             current_block_index,
             duration,
         );
@@ -72,6 +73,7 @@ impl BLCardService {
                 let mut temp_map: HashMap<String, String> = HashMap::new();
                 temp_map.insert(String::from("id"), item.id.to_string());
                 temp_map.insert(String::from("name"), item.name.to_string());
+                temp_map.insert(String::from("content"), item.content.to_string());
                 temp_map.insert(String::from("duration"), format!("{}", item.duration));
                 temp.push(temp_map);
             }
@@ -415,9 +417,10 @@ mod tests {
         testing_env!(context);
 
         let _template_name = String::from("new template 1");
+        let _content = String::from("This is template's content.");
 
         let mut bl_card_service = BLCardService::default();
-        let create_result = bl_card_service.create_template(_template_name.to_string(), 100);
+        let create_result = bl_card_service.create_template(&_template_name, &_content, 100);
         assert_eq!(create_result, true);
         let _templates = bl_card_service.list_template("bob_near".to_string());
 

@@ -1,35 +1,37 @@
 use borsh::{BorshDeserialize, BorshSerialize};
 
-// 模板model
+// 模板model, 一期中仅定义模版结构, 不实现模版相关业务逻辑
 #[derive(Clone, Default, BorshDeserialize, BorshSerialize)]
 pub struct Template {
     pub id: String,         // 模板唯一编号
-    pub name: String,       // 模板名称
+    pub name: String,       // 模板名称, 也是模版生成卡片的默认名称
+    pub content: String,    // 模版内容, 也是模版生成卡片的默认公共消息内容
     pub current_block: u64, // 模板创建时块高
     pub duration: u64,      // 模板超时块数
 }
 
 impl Template {
-    pub fn new(id: String, new_name: String, new_current_block: u64, new_duration: u64) -> Self {
+    pub fn new(id: &str, new_name: &str, content: &str, new_current_block: u64, new_duration: u64) -> Self {
         Template {
-            id: id,
-            name: new_name,
+            id: String::from(id),
+            name: String::from(new_name),
+            content: String::from(content),
             current_block: new_current_block,
             duration: new_duration,
         }
     }
 }
 
-// 名片model
+// 卡片model
 #[derive(Clone, Default, BorshDeserialize, BorshSerialize)]
 pub struct Card {
-    pub id: String,              // 名片唯一编号
-    pub template_id: String,     // 模板唯一编号
+    pub id: String,              // 卡片唯一编号
+    pub template_id: String,     // 所属模版编号,
     pub card_type: u8,           // 卡片类型0为不定向多人，1为指定某人
     pub public_message: String,  // 公开消息
     pub private_message: String, // 私密消息
-    pub name: String,            // 名片名称
-    pub count: u64,              // 名片数量
+    pub name: String,            // 卡片名称
+    pub count: u64,              // 卡片数量
     pub remaining_count: u64,    // 剩余名片数量
     pub is_avg: bool,            // 是否均分
     pub total: u64,              // 总红包

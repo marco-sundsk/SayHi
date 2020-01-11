@@ -1,0 +1,2 @@
+cargo:rustc-env=TYPENUM_BUILD_OP=/Users/haosun/projects/learn-near/SayHi/rust/target/debug/build/typenum-6baffdb83037dd44/out/consts.rs
+cargo:rustc-env=TYPENUM_BUILD_CONSTS=/Users/haosun/projects/learn-near/SayHi/rust/target/debug/build/typenum-6baffdb83037dd44/out/op.rs
