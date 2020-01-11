@@ -5,7 +5,7 @@
 /// ### Card:
 /// The detail of user's card are defined here.
 /// ### Contact: 
-/// Descibe user's contacts.
+/// Contract info are analysed from cards info.
 /// 
 use borsh::{BorshDeserialize, BorshSerialize};
 
@@ -39,9 +39,9 @@ impl Template {
 
 // 卡片model
 #[derive(Clone, Default, BorshDeserialize, BorshSerialize)]
-pub struct MyCard {
-    pub id: String,              // 卡片唯一编号
-    pub template_id: String,     // 所属模版编号, 没有模版则为空串
+pub struct SayHiCard {
+    pub id: CardID,              // 卡片唯一编号
+    pub tid: Option<TemplateID>,     // 所属模版编号
     
     // 卡片信息
     pub name: String,            // 卡片名称
@@ -49,9 +49,9 @@ pub struct MyCard {
     pub private_message: String, // 私密消息
     
     // 收发人相关
-    pub creator: String,        // 卡片创建人
-    pub card_type: u8,           // 卡片类型0为不定向多人，1为联系人卡片
-    pub specify_account: String, // 指定接收人，当card_type为1时必填
+    pub creator: AccountID,        // 卡片创建人
+    pub target: Option<AccountID>, // 卡片目标人, 为自身时代表内置卡片, None代表不定向卡片
+
     pub count: u64,              // 卡片数量, 联系人卡片时该值视为1
     pub remaining_count: u64,    // 剩余卡片数量, 即还能被接收的次数
     // 红包相关
@@ -63,23 +63,22 @@ pub struct MyCard {
     pub duration: u64,           // 卡片超时块数
 }
 
-impl MyCard {
+impl SayHiCard {
     pub fn new(
-        id: &str, template_id: &str,
+        id: &str, tid: Option<TemplateID>,
         name: &str, public_message: &str, private_message: &str,
-        creator: &str, card_type: u8, specify_account: &str, count: u64,
+        creator: &str, target: Option<AccountID>, count: u64,
         is_avg: bool, total: u64,
         current_block: u64, duration: u64
     ) -> Self {
-        MyCard {
+        SayHiCard {
             id: String::from(id),
-            template_id: String::from(template_id),
+            tid: tid,
             name: String::from(name),
             public_message: String::from(public_message),
             private_message: String::from(private_message),
             creator: String::from(creator),
-            card_type: card_type,
-            specify_account: String::from(specify_account),
+            target: target,
             count: count,
             remaining_count: count,
             is_avg: is_avg,
@@ -87,7 +86,6 @@ impl MyCard {
             remaining_total: total,
             current_block: current_block,
             duration: duration,
-            
         }
     }
 }
