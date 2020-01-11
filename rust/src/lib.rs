@@ -3,6 +3,7 @@ use near_bindgen::collections::Map;
 use near_bindgen::{env, near_bindgen};
 use std::collections::HashMap;
 pub mod model;
+use model::{TemplateID, CardID, AccountID};
 
 // 1、创建模板
 // 2、创建卡片 包含卡片标题、私密信息、公开信息、红包等
@@ -22,8 +23,16 @@ type ContactPerson = model::ContactPerson;
 #[near_bindgen]
 #[derive(Default, BorshDeserialize, BorshSerialize)]
 pub struct BLCardService {
-    template_record: Map<String, Vec<Template>>, // key 为账号信息，value 为模板列表
-    template_account_relation: Map<String, String>, // key 为模板唯一编号，value 为账号信息，用于反向查找
+    // templates storage, each user has his own templates list
+    templates: Map<TemplateID, Template>,
+    user_templates: Map<AccountID, Vec<TemplateID>>, 
+
+    // cards storage, each user has his own create-cards list and recv-cards list
+    cards: Map<CardID, Card>,
+    card_created: Map<AccountID, Vec<CardID>>, 
+    card_recv: Map<AccountID, Vec<CardID>>,
+
+    
 
     card_record: Map<String, Map<String, Card>>, // 外层 key 为账号信息，value 为名片信息，内层 key 为cardId，value 为card
     card_account_relation: Map<String, String>, // key 为名片唯一编号，value 为账号信息，用于反向查找
@@ -34,15 +43,17 @@ pub struct BLCardService {
 
 #[near_bindgen]
 impl BLCardService {
+
+    // TODO: 用户内置卡相关操作
+    // 每个用户默认都有一张内置卡，记录发给他的私密信息的加密公钥
+    // 前端获取用户的发卡列表时，检查内置卡的公钥是否与本地私钥匹配，如不匹配，主动发起更新内置卡操作
+
     // 创建模板
-    pub fn create_template(&mut self, name: &String, content: &String, duration: u64) -> bool {
+    pub fn create_template(&mut self, name: &str, content: &str, duration: u64) -> bool {
+        // 获取调用人身份
         let account_id = env::signer_account_id();
-        let mut templates: Vec<Template> = Vec::new();
 
-        if let Some(list) = self.template_record.get(&account_id) {
-            templates = list.to_vec();
-        }
-
+        // 创建模版对象
         let current_block_index = env::block_index();
         let random_seed = env::random_seed();
         let id_str = random_seed
@@ -54,31 +65,39 @@ impl BLCardService {
             &id_str,
             name,
             content,
+            &account_id,
             current_block_index,
             duration,
         );
-        templates.push(new_template);
-        self.template_record.insert(&account_id, &templates);
-        self.template_account_relation.insert(&id_str, &account_id);
+        self.templates.insert(&id_str, &new_template);
 
-        return true;
+        // 关联到用户
+        if let Some(mut list) = self.user_templates.get(&account_id) {
+            // 用户已存在
+            // templates = list.to_vec();
+            list.push(id_str);
+        } else {
+            self.user_templates.insert(&account_id, &vec![id_str]);
+        }
+        true
     }
 
     // 列出指定账号的模板信息
-    pub fn list_template(&self, account_id: String) -> Option<Vec<HashMap<String, String>>> {
-        self.template_record.get(&account_id).map(|record| {
-            let mut temp: Vec<HashMap<String, String>> = Vec::new();
+    pub fn list_template(&self, account_id: &str) -> Option<Vec<HashMap<String, String>>> {
+        let mut rslt: Vec<HashMap<String, String>> = Vec::new();
 
-            for item in record.iter() {
-                let mut temp_map: HashMap<String, String> = HashMap::new();
-                temp_map.insert(String::from("id"), item.id.to_string());
-                temp_map.insert(String::from("name"), item.name.to_string());
-                temp_map.insert(String::from("content"), item.content.to_string());
-                temp_map.insert(String::from("duration"), format!("{}", item.duration));
-                temp.push(temp_map);
+        self.user_templates.get(&String::from(account_id)).map(|records| {    
+            for tid in records.iter() {
+                if let Some(item) = self.templates.get(&tid) {
+                    let mut temp_map: HashMap<String, String> = HashMap::new();
+                    temp_map.insert(String::from("id"), item.id.to_string());
+                    temp_map.insert(String::from("name"), item.name.to_string());
+                    temp_map.insert(String::from("content"), item.content.to_string());
+                    temp_map.insert(String::from("duration"), format!("{}", item.duration));
+                    rslt.push(temp_map);
+                }
             }
-
-            temp
+            rslt
         })
     }
 
@@ -171,11 +190,6 @@ impl BLCardService {
 
             temp
         })
-    }
-
-    // 通过 template 查询创建人
-    pub fn find_account_by_template(&self, template_id: String) -> Option<String> {
-        self.template_account_relation.get(&template_id)
     }
 
     // 通过 card 查询创建人
@@ -422,11 +436,16 @@ mod tests {
         let mut bl_card_service = BLCardService::default();
         let create_result = bl_card_service.create_template(&_template_name, &_content, 100);
         assert_eq!(create_result, true);
-        let _templates = bl_card_service.list_template("bob_near".to_string());
+
+        let _templates = bl_card_service.list_template("bob_near");
 
         match _templates {
-            None => assert_eq!(1, 1),
-            Some(_temp) => assert_eq!(_temp.len(), 1),
+            None => assert_eq!(1, 2),
+            Some(_temp) => {
+                    assert_eq!(_temp.len(), 1);
+                    println!("{}", _temp.len());
+                    println!("{:#?}", _temp[0]);
+                },
         }
     }
 
