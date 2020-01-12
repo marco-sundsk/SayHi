@@ -42,7 +42,7 @@ impl BLCardService {
     // 前端获取用户的发卡列表时，检查内置卡的公钥是否与本地私钥匹配，如不匹配，主动发起更新内置卡操作
 
     // 创建模板
-    pub fn create_template(&mut self, name: &str, content: &str, duration: u64) -> bool {
+    pub fn create_template(&mut self, name: &String, content: &String, duration: u64) -> bool {
         // 获取调用人身份
         let account_id = env::signer_account_id();
 
@@ -72,7 +72,7 @@ impl BLCardService {
     }
 
     // 列出指定账号的模板信息
-    pub fn list_template(&self, account_id: &str) -> Option<Vec<HashMap<String, String>>> {
+    pub fn list_template(&self, account_id: &String) -> Option<Vec<HashMap<String, String>>> {
         let mut rslt: Vec<HashMap<String, String>> = Vec::new();
 
         self.user_templates.get(&String::from(account_id)).map(|records| {    
@@ -93,15 +93,15 @@ impl BLCardService {
     // 创建名片
     pub fn create_card(
         &mut self,
-        template_id: &str,
+        template_id: &String,
         card_type: u8,
-        public_message: &str,
-        private_message: &str,
-        name: &str,
+        public_message: &String,
+        private_message: &String,
+        name: &String,
         count: u64,
         total: u64,
         duration: u64,
-        specify_account: &str,
+        specify_account: &String,
     ) -> String {
         // 入参检查, 卡类型在存储时已归入target, 这里需要逻辑转换
         if card_type != 0 && card_type != 1 {
@@ -145,10 +145,10 @@ impl BLCardService {
     }
 
     // 列出指定账号的创建名片信息
-    pub fn list_card(&self, account_id: &str) -> Option<Vec<HashMap<String, String>>> {
+    pub fn list_card(&self, account_id: &String) -> Option<Vec<HashMap<String, String>>> {
         let mut rslt: Vec<HashMap<String, String>> = Vec::new();
 
-        self.card_created.get(&String::from(account_id)).map(|records| {    
+        self.card_created.get(account_id).map(|records| {    
             for cid in records.iter() {
                 if let Some(item) = self.cards.get(&cid) {
                     let mut temp_map: HashMap<String, String> = HashMap::new();
@@ -177,10 +177,10 @@ impl BLCardService {
     }
 
     // 收卡人扫卡
-    pub fn scan_card(&mut self, card_id: &str) -> Option<HashMap<String, String>> {
+    pub fn scan_card(&mut self, card_id: &String) -> Option<HashMap<String, String>> {
         let account_id = env::signer_account_id();
         // 1. 找到卡
-        if let Some(card) = self.cards.get(&String::from(card_id)) {
+        if let Some(card) = self.cards.get(card_id) {
             // 
             // 2. 卡片是否可收取
             if let Some(target) = card.target {
@@ -248,14 +248,14 @@ impl BLCardService {
     }
 
     // 获取收到的来自某个联系人的卡片
-    pub fn list_recvcard_by_contact(&self, contact: &str) -> Option<Vec<HashMap<String, String>>> {
+    pub fn list_recvcard_by_contact(&self, contact: &String) -> Option<Vec<HashMap<String, String>>> {
         let mut rslt: Vec<HashMap<String, String>> = Vec::new();
         let account_id = env::signer_account_id();
         // 遍历收到的卡片，过滤出creator等于contact的
         if let Some(recvcards_set) = self.card_recv.get(&account_id) {
             for card_id in recvcards_set.iter() {
                 if let Some(card) = self.cards.get(&card_id) {
-                    if card.creator == contact {
+                    if &card.creator == contact {
                         let mut temp_map: HashMap<String, String> = HashMap::new();
                         temp_map.insert(String::from("id"), card.id.to_string());
                         temp_map.insert(
@@ -337,7 +337,7 @@ mod tests {
         let create_result = bl_card_service.create_template(&_template_name, &_content, 100);
         assert_eq!(create_result, true);
 
-        let _templates = bl_card_service.list_template("bob_near");
+        let _templates = bl_card_service.list_template(&String::from("bob_near"));
 
         match _templates {
             None => assert_eq!(1, 2),
@@ -358,19 +358,19 @@ mod tests {
 
         let mut bl_card_service = BLCardService::default();
         let create_result = bl_card_service.create_card(
-            "template_id",  // tid
+            &String::from("template_id"),  // tid
             0,  // card_type
-            "This is public msg", // public
-            "This is private msg", // private
-            "This is name",  // name
+            &String::from("This is public msg"), // public
+            &String::from("This is private msg"), // private
+            &String::from("This is name"),  // name
             1,  // count
             1,  // amount
             100,  // duration
-            "Receiver",
+            &String::from("Receiver"),
         );
         assert_ne!(create_result, "");
         println!("Create card return: {}", create_result);
-        let _cards = bl_card_service.list_card("bob_near");
+        let _cards = bl_card_service.list_card(&String::from("bob_near"));
 
         match _cards {
             None => assert_eq!(1, 2),
@@ -383,20 +383,6 @@ mod tests {
 
     #[test]
     fn test_contract_person() {
-        // let context = get_context(vec![], false);
-        // testing_env!(context);
-        // let mut bl_card_service = BLCardService::default();
-        // let result = bl_card_service.t();
-        // let result_str = result
-        //     .iter()
-        //     .map(|&c| {
-        //         // let temp = c as char;
-        //         format!("{:x?}", c)
-        //     })
-        //     .collect::<String>();
-        // assert_eq!(
-        //     result_str,
-        //     "ae4b3280e56e2faf83f414a6e3dabe9d5fbe18976544c05fed121accb85b53fc"
-        // );
+
     }
 }
