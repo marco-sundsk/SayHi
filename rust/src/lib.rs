@@ -17,9 +17,6 @@ static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
 type Template = model::Template;
 type SayHiCard = model::SayHiCard;
 
-type Card = model::Card;
-type ContactPerson = model::ContactPerson;
-
 // 用于提供访问服务
 #[near_bindgen]
 #[derive(Default, BorshDeserialize, BorshSerialize)]
@@ -34,15 +31,7 @@ pub struct BLCardService {
     card_recv: Map<AccountID, Set<CardID>>,
 
     // contracts storage, each user has his own contracts list
-    user_contracts: Map<AccountID, Set<AccountID>>,
-
-
-
-    card_record: Map<String, Map<String, Card>>, // 外层 key 为账号信息，value 为名片信息，内层 key 为cardId，value 为card
-    card_account_relation: Map<String, String>, // key 为名片唯一编号，value 为账号信息，用于反向查找
-    card_scan_result: Map<String, Card>,        // key 为  名片_扫描人 唯一编号，value 为是否
-
-    contract_person: Map<String, Vec<ContactPerson>>, // key 为账号信息，value 为联系人列表
+    user_contacts: Map<AccountID, Set<AccountID>>,
 }
 
 #[near_bindgen]
@@ -59,11 +48,7 @@ impl BLCardService {
 
         // 创建模版对象
         let current_block_index = env::block_index();
-        let random_seed = env::random_seed();
-        let id_str = random_seed
-            .iter()
-            .map(|&c| format!("{:x?}", c))
-            .collect::<String>();
+        let id_str = self.gen_id();
 
         let new_template = Template::new(
             &id_str,
@@ -125,16 +110,12 @@ impl BLCardService {
         // 创建卡
         let account_id = env::signer_account_id();
         let current_block_index = env::block_index();
-        let random_seed = env::random_seed();
-        let id_str = random_seed
-            .iter()
-            .map(|&c| format!("{:x?}", c))
-            .collect::<String>();
+        let id_str = self.gen_id();
         let rslt = id_str.to_string();
         
         let new_card = SayHiCard::new(
             &id_str,
-            None,  // 模版功能暂未提供
+            Some(String::from(template_id)),  // 模版功能暂未提供
             name,
             public_message,
             private_message,
@@ -221,14 +202,14 @@ impl BLCardService {
             } 
             self.card_recv.get(&account_id).unwrap().insert(&String::from(card_id));
             // 4. 互加联系人
-            if let None = self.user_contracts.get(&account_id) {
-                self.user_contracts.insert(&account_id, &Set::default());
+            if let None = self.user_contacts.get(&account_id) {
+                self.user_contacts.insert(&account_id, &Set::default());
             } 
-            self.user_contracts.get(&account_id).unwrap().insert(&card.creator);
-            if let None = self.user_contracts.get(&card.creator) {
-                self.user_contracts.insert(&card.creator, &Set::default());
+            self.user_contacts.get(&account_id).unwrap().insert(&card.creator);
+            if let None = self.user_contacts.get(&card.creator) {
+                self.user_contacts.insert(&card.creator, &Set::default());
             } 
-            self.user_contracts.get(&card.creator).unwrap().insert(&account_id);
+            self.user_contacts.get(&card.creator).unwrap().insert(&account_id);
             // 5. 返回卡信息
             let mut temp_map: HashMap<String, String> = HashMap::new();
             temp_map.insert(String::from("id"), card.id.to_string());
@@ -255,86 +236,64 @@ impl BLCardService {
         }
     }
 
-
-    // TODO: 获取联系人列表
-    pub fn list_contract_person(&self, account_id: String) -> Option<Vec<HashMap<String, String>>> {
-        self.contract_person.get(&account_id).map(|record| {
-            let mut temp: Vec<HashMap<String, String>> = Vec::new();
-
-            for item in record.iter() {
-                let mut temp_map: HashMap<String, String> = HashMap::new();
-                temp_map.insert(String::from("id"), item.id.to_string());
-                temp_map.insert(
-                    String::from("contact_person"),
-                    item.contact_person.to_string(),
-                );
-
-                let mut need_key_section = String::from("_");
-                need_key_section.push_str(&account_id);
-                // TODO 此处结构需要修改，此时为临时方式
-                let mut card_info = String::from("[{}");
-
-                for scan_item in self.card_scan_result.keys() {
-                    if scan_item.contains(&need_key_section.to_string()) {
-                        let scan_card_item: Card = self.card_scan_result.get(&scan_item).unwrap();
-                        card_info.push_str(",{");
-
-                        card_info.push_str("\"id\":");
-                        card_info.push_str("\"");
-                        card_info.push_str(&scan_card_item.id);
-                        card_info.push_str("\"");
-                        card_info.push(',');
-                        card_info.push_str("\"name\":");
-                        card_info.push_str("\"");
-                        card_info.push_str(&scan_card_item.name);
-                        card_info.push_str("\"");
-                        card_info.push(',');
-                        card_info.push_str("\"total\":");
-                        card_info.push_str("\"");
-                        card_info.push_str("10"); // TODO 需要获取红包总数
-                        card_info.push_str("\"");
-                        card_info.push(',');
-
-                        card_info.push_str("\"template_id\":");
-                        card_info.push_str("\"");
-                        card_info.push_str(&scan_card_item.template_id);
-                        card_info.push_str("\"");
-                        card_info.push(',');
-
-                        card_info.push_str("\"public_message\":");
-                        card_info.push_str("\"");
-                        card_info.push_str(&scan_card_item.public_message);
-                        card_info.push_str("\"");
-                        card_info.push(',');
-
-                        card_info.push_str("\"private_message\":");
-                        card_info.push_str("\"");
-                        card_info.push_str(&scan_card_item.private_message);
-                        card_info.push_str("\"");
-
-                        card_info.push('}');
-                    }
-                }
-
-                card_info.push(']');
-
-                temp_map.insert(String::from("card_count"), format!("{}", item.card_count));
-                temp_map.insert(String::from("card_list"), card_info);
-                temp_map.insert(String::from("duration"), format!("{}", item.duration));
-                temp.push(temp_map)
-            }
-
-            temp
-        })
+    // 获取自己的联系人
+    pub fn list_contacts(&self) -> Option<Vec<String>> {
+        let account_id = env::signer_account_id();
+        if let Some(contact_sets) = self.user_contacts.get(&account_id) {
+            Some(contact_sets.to_vec())
+        } else {
+            env::log("您还没有任何联系人".as_bytes());
+            None
+        }
     }
 
-    pub fn t(&self) -> String {
+    // 获取收到的来自某个联系人的卡片
+    pub fn list_recvcard_by_contact(&self, contact: &str) -> Option<Vec<HashMap<String, String>>> {
+        let mut rslt: Vec<HashMap<String, String>> = Vec::new();
+        let account_id = env::signer_account_id();
+        // 遍历收到的卡片，过滤出creator等于contact的
+        if let Some(recvcards_set) = self.card_recv.get(&account_id) {
+            for card_id in recvcards_set.iter() {
+                if let Some(card) = self.cards.get(&card_id) {
+                    if card.creator == contact {
+                        let mut temp_map: HashMap<String, String> = HashMap::new();
+                        temp_map.insert(String::from("id"), card.id.to_string());
+                        temp_map.insert(
+                            String::from("template_id"), 
+                            card.tid.unwrap_or(String::from("").to_string()),
+                        );
+                        temp_map.insert(
+                            String::from("public_message"),
+                            card.public_message.to_string(),
+                        );
+                        temp_map.insert(
+                            String::from("private_message"),
+                            card.private_message.to_string(),
+                        );
+                        temp_map.insert(String::from("name"), card.name.to_string());
+                        temp_map.insert(String::from("count"), format!("{}", card.count));
+                        temp_map.insert(String::from("total"), format!("{}", card.total));
+                        temp_map.insert(String::from("duration"), format!("{}", card.duration));
+                        rslt.push(temp_map);
+                    }
+                } else {
+                    env::log("Error!!! Storage State Inconsistency!".as_bytes());
+                    continue;
+                }
+            }
+            Some(rslt)
+        } else {
+            env::log("您还没有收到任何卡片".as_bytes());
+            None
+        }
+    }
+
+    fn gen_id(&self) -> String {
         let random_seed = env::random_seed();
         let id_str = random_seed
             .iter()
             .map(|&c| format!("{:x?}", c))
             .collect::<String>();
-
         id_str
     }
 }
