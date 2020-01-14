@@ -11,6 +11,17 @@ To build:
 ```bash
 RUSTFLAGS='-C link-arg=-s' cargo build --target wasm32-unknown-unknown --release
 ```
+
+----------
+### Deploy Contract
+* Prepare contract accountID, let's say, sayhi_bl;
+* Send some NEAR to contract account;
+* use near shell to deploy;
+```bash
+cd ts  
+near deploy --accountId=sayhi_bl --wasmFile=../rust/target/wasm32-unknown-unknown/release/say_hi.wasm
+```
+
 -----------
 ### Call Contract
 To init call from terminal:
@@ -26,17 +37,3 @@ near call sayhi_bl create_card "{\"template_id\": \"default\", \"card_type\": 0,
 near call sayhi_bl list_card "" --accountId=marco_bl --homeDir=./
 ```
 
-----------
-### Deploy Contract
-* Prepare contract accountID, let's say, sayhi_bl;
-* Send some NEAR to contract account;
-* use near shell to deploy;
-```bash
-cd ts  
-near deploy --accountId=sayhi_bl --wasmFile=../rust/target/wasm32-unknown-unknown/release/say_hi.wasm
-```
-
-### Call Contract
-```bash
-near call sayhi_bl create_card "{\"template_id\": \"template_1\"}" --accountId=aaaa
-```
