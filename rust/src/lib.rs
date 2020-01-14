@@ -72,10 +72,10 @@ impl BLCardService {
     }
 
     // 列出指定账号的模板信息
-    pub fn list_template(&self, account_id: &String) -> Option<Vec<HashMap<String, String>>> {
+    pub fn list_template(&self) -> Option<Vec<HashMap<String, String>>> {
         let mut rslt: Vec<HashMap<String, String>> = Vec::new();
-
-        self.user_templates.get(&String::from(account_id)).map(|records| {    
+        let account_id = env::signer_account_id();
+        self.user_templates.get(&account_id).map(|records| {    
             for tid in records.iter() {
                 if let Some(item) = self.templates.get(&tid) {
                     let mut temp_map: HashMap<String, String> = HashMap::new();
@@ -144,11 +144,13 @@ impl BLCardService {
         rslt
     }
 
-    // 列出指定账号的创建名片信息
-    pub fn list_card(&self, account_id: &String) -> Option<Vec<HashMap<String, String>>> {
+    // 列出自己创建的名片信息
+    pub fn list_card(&self) -> Option<Vec<HashMap<String, String>>> {
         let mut rslt: Vec<HashMap<String, String>> = Vec::new();
-
-        self.card_created.get(account_id).map(|records| {    
+        let account_id = env::signer_account_id();
+        // env::log(format!("signer_account_id: {}", env::signer_account_id()).as_bytes());
+        // env::log(format!("current_account_id: {}", env::current_account_id()).as_bytes());
+        self.card_created.get(&account_id).map(|records| {    
             for cid in records.iter() {
                 if let Some(item) = self.cards.get(&cid) {
                     let mut temp_map: HashMap<String, String> = HashMap::new();
@@ -337,7 +339,7 @@ mod tests {
         let create_result = bl_card_service.create_template(&_template_name, &_content, 100);
         assert_eq!(create_result, true);
 
-        let _templates = bl_card_service.list_template(&String::from("bob_near"));
+        let _templates = bl_card_service.list_template();
 
         match _templates {
             None => assert_eq!(1, 2),
@@ -370,7 +372,7 @@ mod tests {
         );
         assert_ne!(create_result, "");
         println!("Create card return: {}", create_result);
-        let _cards = bl_card_service.list_card(&String::from("bob_near"));
+        let _cards = bl_card_service.list_card();
 
         match _cards {
             None => assert_eq!(1, 2),
