@@ -1,24 +1,39 @@
-# Status Message
+# SayHi
 
-Records the status messages of the accounts that call this contract.
+SayHi backend contract.
 
 ## Testing
 To test run:
 ```bash
-cargo test --package status-message -- --nocapture
+cargo test --package say-hi -- --nocapture
+```
+To build:
+```bash
+RUSTFLAGS='-C link-arg=-s' cargo build --target wasm32-unknown-unknown --release
 ```
 
-RUSTFLAGS='-C link-arg=-s' cargo build --target wasm32-unknown-unknown --release
-
-
-near call bl_card_1 list_template "{\"account_id\": \"aaaa\"}" --accountId=aaaa --homeDir=/Users/rain/Project/near/near-bindgen/examples/status-message/neardev
-near call bl_card_1 list_card "{\"account_id\": \"aaaa\"}" --accountId=aaaa --homeDir=/Users/rain/Project/near/near-bindgen/examples/status-message/neardev
-near call bl_card_1 create_template "{\"name\": \"aaaa\", \"duration\": 100}" --accountId=aaaa --homeDir=/Users/rain/Project/near/near-bindgen/examples/status-message/neardev
-near call bl_card_1 create_card "{\"template_id\": \"template_1\", \"public_message\": \"123\", \"private_message\": \"233\", \"name\": \"333\", \"count\": 10, \"is_avg\": true, \"total\": 10, \"duration\": 100}" --accountId=aaaa --homeDir=/Users/rain/Project/near/near-bindgen/examples/status-message/neardev
-
-
 ----------
-near deploy --wasmFile=/Users/rain/Project/near/bcvc/rust/target/wasm32-unknown-unknown/release/status_message.wasm --homeDir=/Users/rain/Project/near/bcvc/rust/neardev --contractName=bl_card_1
+### Deploy Contract
+* Prepare contract accountID, let's say, sayhi_bl;
+* Send some NEAR to contract account;
+* use near shell to deploy;
+```bash
+cd ts  
+near deploy --accountId=sayhi_bl --wasmFile=../rust/target/wasm32-unknown-unknown/release/say_hi.wasm
+```
 
+-----------
+### Call Contract
+To init call from terminal:
+Let's say, marco_bl is your accountID, and sayhi_bl is the contractID, and the key stored in ./neardev
 
-near call bl_card_1 create_card "{\"template_id\": \"template_1\"}" --accountId=aaaa --homeDir=/Users/rain/Project/near/near-bindgen/examples/status-message/neardev
+```bash
+# about template
+near call sayhi_bl list_template "" --accountId=marco_bl --homeDir=./
+near call sayhi_bl create_template "{\"name\": \"invitation\", \"content\": \"This is invitaion content.\", \"duration\": 100}" --accountId=marco_bl --homeDir=./
+
+# about card
+near call sayhi_bl create_card "{\"template_id\": \"default\", \"card_type\": 0, \"public_message\": \"This is public msg content.\", \"private_message\": \"This is private_message conent.\", \"name\": \"invitation\", \"count\": 10, \"total\": 10, \"duration\": 100, \"specify_account\": \"\"}" --accountId=marco_bl --homeDir=./
+near call sayhi_bl list_card "" --accountId=marco_bl --homeDir=./
+```
+
