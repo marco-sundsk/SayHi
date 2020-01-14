@@ -206,12 +206,17 @@ impl BLCardService {
             // 4. 互加联系人
             if let None = self.user_contacts.get(&account_id) {
                 self.user_contacts.insert(&account_id, &Set::default());
+                env::log(format!("{} gen Set to store contact.", account_id).as_bytes());
             } 
             self.user_contacts.get(&account_id).unwrap().insert(&card.creator);
+            env::log(format!("{} add {} to his contact.", account_id, card.creator).as_bytes());
+
             if let None = self.user_contacts.get(&card.creator) {
                 self.user_contacts.insert(&card.creator, &Set::default());
+                env::log(format!("{} gen Set to store contact.", card.creator).as_bytes());
             } 
             self.user_contacts.get(&card.creator).unwrap().insert(&account_id);
+            env::log(format!("{} add {} to his contact.", card.creator, account_id).as_bytes());
             // 5. 返回卡信息
             let mut temp_map: HashMap<String, String> = HashMap::new();
             temp_map.insert(String::from("id"), card.id.to_string());
@@ -242,6 +247,7 @@ impl BLCardService {
     pub fn list_contacts(&self) -> Option<Vec<String>> {
         let account_id = env::signer_account_id();
         if let Some(contact_sets) = self.user_contacts.get(&account_id) {
+            env::log(format!("{} has {} contacts.", account_id, contact_sets.len()).as_bytes());
             Some(contact_sets.to_vec())
         } else {
             env::log("您还没有任何联系人".as_bytes());
