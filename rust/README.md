@@ -18,7 +18,7 @@ Let's say, marco_bl is your accountID, and sayhi_bl is the contractID, and the k
 
 ```bash
 # about template
-near call sayhi_bl list_template "{\"account_id\": \"marco_bl\"}" --accountId=marco_bl --homeDir=./
+near call sayhi_bl list_template "" --accountId=marco_bl --homeDir=./
 near call sayhi_bl create_template "{\"name\": \"invitation\", \"content\": \"This is invitaion content.\", \"duration\": 100}" --accountId=marco_bl --homeDir=./
 
 # about card
