@@ -1,6 +1,6 @@
 use borsh::{BorshDeserialize, BorshSerialize};
 use near_bindgen::collections::Map;
-use near_bindgen::{env, near_bindgen};
+use near_bindgen::{env, near_bindgen, Promise};
 use std::collections::{HashMap, HashSet};
 pub mod model;
 use model::{TemplateID, CardID, AccountID};
@@ -183,12 +183,12 @@ impl BLCardService {
     pub fn scan_card(&mut self, card_id: &String) -> Option<HashMap<String, String>> {
         let account_id = env::signer_account_id();
         // 1. 找到卡
-        if let Some(card) = self.cards.get(card_id) {
+        if let Some(mut card) = self.cards.get(card_id) {
             // 
             // 2. 卡片是否可收取
-            if let Some(target) = card.target {
+            if let Some(target) = &card.target {
                 // 定向卡片，判断是否给我
-                if target != account_id {
+                if target.to_string() != account_id {
                     env::log("定向卡片只能由特定人收取".as_bytes());
                     return None;
                 }
@@ -201,7 +201,7 @@ impl BLCardService {
             }
 
             if account_id == card.creator {
-                // 定向卡片，判断是否给我
+                // 定向卡片，判断是否自己创建
                 env::log("卡片不能自收".as_bytes());
                 return None;
             }
@@ -210,7 +210,13 @@ impl BLCardService {
             if let None = self.card_recv.get(&account_id) {
                 self.card_recv.insert(&account_id, &HashSet::new());
             } 
+
             self.card_recv.get(&account_id).unwrap().insert(String::from(card_id));
+
+            if let Some(mut item) = self.card_recv.get(&account_id) {
+                item.insert(String::from(card_id));
+                self.card_recv.insert(&account_id, &item);
+            }
             // 4. 互加联系人
             if let None = self.user_contacts.get(&account_id) {
                 self.user_contacts.insert(&account_id, &HashSet::new());
@@ -238,7 +244,13 @@ impl BLCardService {
 
             env::log(format!("{} add {} to his contact.", card.creator, account_id).as_bytes());
 
-            // 5. 返回卡信息
+            // 5. 卡信息变动后进行更新
+            card.remaining_count = card.remaining_count - 1;
+            card.remaining_total = card.remaining_total - 1;
+        
+            self.cards.insert(card_id, &card);
+
+            // 6. 返回卡信息
             let mut temp_map: HashMap<String, String> = HashMap::new();
             temp_map.insert(String::from("id"), card.id.to_string());
             temp_map.insert(
@@ -315,6 +327,13 @@ impl BLCardService {
             env::log("您还没有收到任何卡片".as_bytes());
             None
         }
+    }
+
+    pub fn send_balance(&mut self) -> bool {
+        const SCHOLARSHIP_AMOUNT: u128 = 1 * NEAR_BASE;
+        const NEAR_BASE: u128 = 1_000_000_000_000_000_000_000_000;
+        Promise::new(String::from("aaaa")).transfer(SCHOLARSHIP_AMOUNT);
+        return true;
     }
 
     fn gen_id(&self) -> String {
