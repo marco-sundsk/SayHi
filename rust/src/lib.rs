@@ -138,6 +138,7 @@ impl BLCardService {
 
         if let Some(mut sends) = self.card_created.get(&account_id) {
             sends.push(id_str);
+            self.card_created.insert(&account_id, &sends);
         } else {
             self.card_created.insert(&account_id, &vec![id_str]);
         }
@@ -198,6 +199,13 @@ impl BLCardService {
                     return None;
                 }
             }
+
+            if account_id == card.creator {
+                // 定向卡片，判断是否给我
+                env::log("卡片不能自收".as_bytes());
+                return None;
+            }
+
             // 3. 收取卡片
             if let None = self.card_recv.get(&account_id) {
                 self.card_recv.insert(&account_id, &HashSet::new());
@@ -208,15 +216,28 @@ impl BLCardService {
                 self.user_contacts.insert(&account_id, &HashSet::new());
                 env::log(format!("{} gen Set to store contact.", account_id).as_bytes());
             } 
-            self.user_contacts.get(&account_id).unwrap().insert(String::from(&card.creator));
+
+            // self.user_contacts.get(&account_id).unwrap().insert(String::from(&card.creator));
+            if let Some(mut item) = self.user_contacts.get(&account_id) {
+                item.insert(String::from(&card.creator));
+                self.user_contacts.insert(&account_id, &item);
+            }
+ 
             env::log(format!("{} add {} to his contact.", account_id, card.creator).as_bytes());
 
             if let None = self.user_contacts.get(&card.creator) {
                 self.user_contacts.insert(&card.creator, &HashSet::new());
                 env::log(format!("{} gen Set to store contact.", card.creator).as_bytes());
             } 
-            self.user_contacts.get(&card.creator).unwrap().insert(String::from(&account_id));
+
+            // self.user_contacts.get(&card.creator).unwrap().insert(String::from(&account_id));
+            if let Some(mut item) = self.user_contacts.get(&card.creator) {
+                item.insert(String::from(&account_id));
+                self.user_contacts.insert(&card.creator, &item);
+            }
+
             env::log(format!("{} add {} to his contact.", card.creator, account_id).as_bytes());
+
             // 5. 返回卡信息
             let mut temp_map: HashMap<String, String> = HashMap::new();
             temp_map.insert(String::from("id"), card.id.to_string());
