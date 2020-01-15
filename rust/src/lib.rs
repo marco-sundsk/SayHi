@@ -3,7 +3,7 @@ use near_bindgen::collections::Map;
 use near_bindgen::{env, near_bindgen, Promise};
 use std::collections::{HashMap, HashSet};
 pub mod model;
-use model::{TemplateID, CardID, AccountID};
+use model::{TemplateID, CardID, AccountID, CertificateID};
 
 // 1、创建模板
 // 2、创建卡片 包含卡片标题、私密信息、公开信息、红包等
@@ -16,6 +16,7 @@ static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
 
 type Template = model::Template;
 type SayHiCard = model::SayHiCard;
+type Certificate = model::Certificate;
 
 // 用于提供访问服务
 #[near_bindgen]
@@ -29,6 +30,10 @@ pub struct BLCardService {
     cards: Map<CardID, SayHiCard>,
     card_created: Map<AccountID, Vec<CardID>>, 
     card_recv: Map<AccountID, HashSet<CardID>>,
+
+    // 证书相关
+    certificates: Map<CertificateID, Certificate>,
+    certificate_created: Map<AccountID, Vec<CertificateID>>,
 
     // contracts storage, each user has his own contracts list
     user_contacts: Map<AccountID, HashSet<AccountID>>,
