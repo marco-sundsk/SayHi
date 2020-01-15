@@ -1,7 +1,7 @@
 use borsh::{BorshDeserialize, BorshSerialize};
-use near_bindgen::collections::{Map, Set};
+use near_bindgen::collections::Map;
 use near_bindgen::{env, near_bindgen};
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 pub mod model;
 use model::{TemplateID, CardID, AccountID};
 
@@ -28,10 +28,10 @@ pub struct BLCardService {
     // cards storage, each user has his own create-cards list and recv-cards list
     cards: Map<CardID, SayHiCard>,
     card_created: Map<AccountID, Vec<CardID>>, 
-    card_recv: Map<AccountID, Set<CardID>>,
+    card_recv: Map<AccountID, HashSet<CardID>>,
 
     // contracts storage, each user has his own contracts list
-    user_contacts: Map<AccountID, Set<AccountID>>,
+    user_contacts: Map<AccountID, HashSet<AccountID>>,
 }
 
 #[near_bindgen]
@@ -200,22 +200,22 @@ impl BLCardService {
             }
             // 3. 收取卡片
             if let None = self.card_recv.get(&account_id) {
-                self.card_recv.insert(&account_id, &Set::default());
+                self.card_recv.insert(&account_id, &HashSet::new());
             } 
-            self.card_recv.get(&account_id).unwrap().insert(&String::from(card_id));
+            self.card_recv.get(&account_id).unwrap().insert(String::from(card_id));
             // 4. 互加联系人
             if let None = self.user_contacts.get(&account_id) {
-                self.user_contacts.insert(&account_id, &Set::default());
+                self.user_contacts.insert(&account_id, &HashSet::new());
                 env::log(format!("{} gen Set to store contact.", account_id).as_bytes());
             } 
-            self.user_contacts.get(&account_id).unwrap().insert(&card.creator);
+            self.user_contacts.get(&account_id).unwrap().insert(String::from(&card.creator));
             env::log(format!("{} add {} to his contact.", account_id, card.creator).as_bytes());
 
             if let None = self.user_contacts.get(&card.creator) {
-                self.user_contacts.insert(&card.creator, &Set::default());
+                self.user_contacts.insert(&card.creator, &HashSet::new());
                 env::log(format!("{} gen Set to store contact.", card.creator).as_bytes());
             } 
-            self.user_contacts.get(&card.creator).unwrap().insert(&account_id);
+            self.user_contacts.get(&card.creator).unwrap().insert(String::from(&account_id));
             env::log(format!("{} add {} to his contact.", card.creator, account_id).as_bytes());
             // 5. 返回卡信息
             let mut temp_map: HashMap<String, String> = HashMap::new();
@@ -248,7 +248,7 @@ impl BLCardService {
         let account_id = env::signer_account_id();
         if let Some(contact_sets) = self.user_contacts.get(&account_id) {
             env::log(format!("{} has {} contacts.", account_id, contact_sets.len()).as_bytes());
-            Some(contact_sets.to_vec())
+            Some(contact_sets.iter().map(|item| String::from(item)).collect::<Vec<String>>())
         } else {
             env::log("您还没有任何联系人".as_bytes());
             None
