@@ -18,6 +18,9 @@ type Template = model::Template;
 type SayHiCard = model::SayHiCard;
 type Certificate = model::Certificate;
 
+const SCHOLARSHIP_AMOUNT: u128 = 1 * NEAR_BASE;
+const NEAR_BASE: u128 = 1_000_000_000_000_000_000_000_000;
+
 // 用于提供访问服务
 #[near_bindgen]
 #[derive(Default, BorshDeserialize, BorshSerialize)]
@@ -30,6 +33,7 @@ pub struct BLCardService {
     cards: Map<CardID, SayHiCard>,
     card_created: Map<AccountID, Vec<CardID>>, 
     card_recv: Map<AccountID, HashSet<CardID>>,
+    card_scan_result: Map<CardID, HashMap<AccountID, u64>>,
 
     // 证书相关
     certificates: Map<CertificateID, Certificate>,
@@ -106,6 +110,7 @@ impl BLCardService {
         count: u64,
         total: u64,
         duration: u64,
+        is_rand: bool,
         specify_account: &String,
     ) -> String {
         // 入参检查, 卡类型在存储时已归入target, 这里需要逻辑转换
@@ -133,7 +138,7 @@ impl BLCardService {
                 }
             },
             count,
-            true,  // random 红包功能暂未提供
+            !is_rand,  // random 红包功能暂未提供
             total,
             current_block_index,
             duration,
@@ -250,6 +255,18 @@ impl BLCardService {
             env::log(format!("{} add {} to his contact.", card.creator, account_id).as_bytes());
 
             // 5. 卡信息变动后进行更新
+            if let None = self.card_scan_result.get(card_id) {
+                self.card_scan_result.insert(&card_id, &HashMap::new());
+            }
+
+            if let Some(mut item) = self.card_scan_result.get(card_id) {
+                env::log(format!("transfer to {}.", account_id).as_bytes());
+                item.insert(String::from(&account_id), 1); // TODO 第二个参数为红包金额，暂定为1，应根据卡片设置进行判断是否为随机金额
+                self.transfer(account_id, 1 * SCHOLARSHIP_AMOUNT); // TODO 转账, 第二个参数为红包金额，暂定为1
+                self.card_scan_result.insert(&card_id, &item);
+            }
+            
+
             card.remaining_count = card.remaining_count - 1;
             card.remaining_total = card.remaining_total - 1;
         
@@ -334,13 +351,6 @@ impl BLCardService {
         }
     }
 
-    pub fn send_balance(&mut self) -> bool {
-        const SCHOLARSHIP_AMOUNT: u128 = 1 * NEAR_BASE;
-        const NEAR_BASE: u128 = 1_000_000_000_000_000_000_000_000;
-        Promise::new(String::from("aaaa")).transfer(SCHOLARSHIP_AMOUNT);
-        return true;
-    }
-
     fn gen_id(&self) -> String {
         let random_seed = env::random_seed();
         let id_str = random_seed
@@ -348,6 +358,17 @@ impl BLCardService {
             .map(|&c| format!("{:x?}", c))
             .collect::<String>();
         id_str
+    }
+}
+
+impl BLCardService {
+    fn transfer(&self, target_account: String, ammount: u128) -> bool {
+        if 0 < ammount {
+            Promise::new(target_account).transfer(ammount);
+            return true;
+        }
+        
+        return false;
     }
 }
 
