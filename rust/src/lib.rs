@@ -18,7 +18,7 @@ type Template = model::Template;
 type SayHiCard = model::SayHiCard;
 type Certificate = model::Certificate;
 
-const SCHOLARSHIP_AMOUNT: u128 = 1 * NEAR_BASE;
+// const SCHOLARSHIP_AMOUNT: u128 = 1 * NEAR_BASE;
 const NEAR_BASE: u128 = 1_000_000_000_000_000_000_000_000;
 
 // 用于提供访问服务
@@ -259,16 +259,27 @@ impl BLCardService {
                 self.card_scan_result.insert(&card_id, &HashMap::new());
             }
 
+            let mut recv_total = 0u64;
             if let Some(mut item) = self.card_scan_result.get(card_id) {
                 env::log(format!("transfer to {}.", account_id).as_bytes());
-                item.insert(String::from(&account_id), 1); // TODO 第二个参数为红包金额，暂定为1，应根据卡片设置进行判断是否为随机金额
-                self.transfer(account_id, 1 * SCHOLARSHIP_AMOUNT); // TODO 转账, 第二个参数为红包金额，暂定为1
+
+                if card.is_avg {
+                    recv_total = card.total / card.count;
+                } else {
+                    if card.remaining_count - 1 > 0 {
+                        recv_total = self.random_amount(card.total);
+                    } else {
+                        recv_total = card.total - card.remaining_total;
+                    }
+                }
+                
+                item.insert(String::from(&account_id), recv_total as u64);
+                self.transfer(account_id, recv_total as u128 * NEAR_BASE);
                 self.card_scan_result.insert(&card_id, &item);
             }
             
-
             card.remaining_count = card.remaining_count - 1;
-            card.remaining_total = card.remaining_total - 1;
+            card.remaining_total = card.remaining_total - recv_total as u64;
         
             self.cards.insert(card_id, &card);
 
@@ -351,6 +362,11 @@ impl BLCardService {
         }
     }
 
+}
+
+impl BLCardService {
+
+    // 生成随机
     fn gen_id(&self) -> String {
         let random_seed = env::random_seed();
         let id_str = random_seed
@@ -359,16 +375,39 @@ impl BLCardService {
             .collect::<String>();
         id_str
     }
-}
 
-impl BLCardService {
-    fn transfer(&self, target_account: String, ammount: u128) -> bool {
-        if 0 < ammount {
-            Promise::new(target_account).transfer(ammount);
+    // 交易
+    fn transfer(&self, target_account: String, amount: u128) -> bool {
+        if 0 < amount {
+            Promise::new(target_account).transfer(amount);
             return true;
         }
         
         return false;
+    }
+
+    // 计算红包随机比例
+    fn random_amount(&self, total_amount: u64) -> u64 {
+        let u8_max_value: u64 = u8::max_value().into();
+        let block_length = total_amount / u8_max_value;
+
+        let random_seed = env::random_seed();
+
+        // 计算总 seed 值
+        let mut block_index = 0_u8;
+
+        for item in random_seed {
+            block_index = block_index.wrapping_add(item);
+        }
+
+        // TODO 有待检查
+        if block_index < 1 {
+            block_index += 1;
+        } else if block_index > 253 {
+            block_index -= 1;
+        }
+
+        block_length.wrapping_mul(block_index.into())
     }
 }
 
@@ -393,7 +432,7 @@ mod tests {
             storage_usage: 0,
             attached_deposit: 0,
             prepaid_gas: 10u64.pow(9),
-            random_seed: vec![0, 1, 2],
+            random_seed: vec![0, 1, 2, 3, 4, 5, 6],
             is_view,
             output_data_receivers: vec![],
         }
@@ -440,6 +479,7 @@ mod tests {
             1,  // count
             1,  // amount
             100,  // duration
+            true,
             &String::from("Receiver"),
         );
         assert_ne!(create_result, "");
@@ -457,6 +497,28 @@ mod tests {
 
     #[test]
     fn test_contract_person() {
+
+    }
+
+    #[test]
+    fn test_random() {
+        let context = get_context(vec![], false);
+        testing_env!(context);
+
+        // let random_seed = env::random_seed();
+        let random_seed = vec![1u8, 11u8, 34u8, 44u8, 100u8, 145u8, 223u8];
+        
+        let mut total = 0_u8;
+
+        for item in random_seed {
+            total = total.wrapping_add(item);
+        }
+
+        let u8_max_value: u8 = u8::max_value().into();
+        assert_eq!(46, total);
+        total = total.wrapping_mul(100);
+        // total = total.wrapping_div(u8_max_value);
+        assert_eq!(248, total);
 
     }
 }
