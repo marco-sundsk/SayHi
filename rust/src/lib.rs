@@ -20,6 +20,7 @@ type Certificate = model::Certificate;
 
 // const SCHOLARSHIP_AMOUNT: u128 = 1 * NEAR_BASE;
 const NEAR_BASE: u128 = 1_000_000_000_000_000_000_000_000;
+const CREATE_CARD_BASE: u128 = 1_000_000_000_000_000_000;
 
 // 用于提供访问服务
 #[near_bindgen]
@@ -81,9 +82,9 @@ impl BLCardService {
     }
 
     // 列出指定账号的模板信息
-    pub fn list_template(&self) -> Option<Vec<HashMap<String, String>>> {
+    pub fn list_template(&self, account_id: &String) -> Option<Vec<HashMap<String, String>>> {
         let mut rslt: Vec<HashMap<String, String>> = Vec::new();
-        let account_id = env::signer_account_id();
+        // let account_id = env::signer_account_id();
         self.user_templates.get(&account_id).map(|records| {    
             for tid in records.iter() {
                 if let Some(item) = self.templates.get(&tid) {
@@ -108,7 +109,7 @@ impl BLCardService {
         private_message: &String,
         name: &String,
         count: u64,
-        total: u64,
+        total: u128,
         duration: u64,
         is_rand: bool,
         specify_account: &String,
@@ -123,6 +124,8 @@ impl BLCardService {
         let id_str = self.gen_id();
         let rslt = id_str.to_string();
         
+        let total_u128: u128 = total * CREATE_CARD_BASE;
+
         let new_card = SayHiCard::new(
             &id_str,
             Some(String::from(template_id)),  // 模版功能暂未提供
@@ -139,7 +142,7 @@ impl BLCardService {
             },
             count,
             !is_rand,  // random 红包功能暂未提供
-            total,
+            total_u128,
             current_block_index,
             duration,
         );
@@ -156,9 +159,9 @@ impl BLCardService {
     }
 
     // 列出自己创建的名片信息
-    pub fn list_card(&self) -> Option<Vec<HashMap<String, String>>> {
+    pub fn list_card(&self, account_id: &String) -> Option<Vec<HashMap<String, String>>> {
         let mut rslt: Vec<HashMap<String, String>> = Vec::new();
-        let account_id = env::signer_account_id();
+        // let account_id = env::signer_account_id();
         // env::log(format!("signer_account_id: {}", env::signer_account_id()).as_bytes());
         // env::log(format!("current_account_id: {}", env::current_account_id()).as_bytes());
         self.card_created.get(&account_id).map(|records| {    
@@ -259,12 +262,12 @@ impl BLCardService {
                 self.card_scan_result.insert(&card_id, &HashMap::new());
             }
 
-            let mut recv_total = 0u64;
+            let mut recv_total = 0_u128;
             if let Some(mut item) = self.card_scan_result.get(card_id) {
                 env::log(format!("transfer to {}.", account_id).as_bytes());
 
                 if card.is_avg {
-                    recv_total = card.total / card.count;
+                    recv_total = card.total / (card.count as u128);
                 } else {
                     if card.remaining_count - 1 > 0 {
                         recv_total = self.random_amount(card.total);
@@ -279,7 +282,7 @@ impl BLCardService {
             }
             
             card.remaining_count = card.remaining_count - 1;
-            card.remaining_total = card.remaining_total - recv_total as u64;
+            card.remaining_total = card.remaining_total - recv_total;
         
             self.cards.insert(card_id, &card);
 
@@ -310,8 +313,8 @@ impl BLCardService {
     }
 
     // 获取自己的联系人
-    pub fn list_contacts(&self) -> Option<Vec<String>> {
-        let account_id = env::signer_account_id();
+    pub fn list_contacts(&self, account_id: &String) -> Option<Vec<String>> {
+        // let account_id = env::signer_account_id();
         if let Some(contact_sets) = self.user_contacts.get(&account_id) {
             env::log(format!("{} has {} contacts.", account_id, contact_sets.len()).as_bytes());
             Some(contact_sets.iter().map(|item| String::from(item)).collect::<Vec<String>>())
@@ -322,9 +325,9 @@ impl BLCardService {
     }
 
     // 获取收到的来自某个联系人的卡片
-    pub fn list_recvcard_by_contact(&self, contact: &String) -> Option<Vec<HashMap<String, String>>> {
+    pub fn list_recvcard_by_contact(&self, account_id: &String, contact: &String) -> Option<Vec<HashMap<String, String>>> {
         let mut rslt: Vec<HashMap<String, String>> = Vec::new();
-        let account_id = env::signer_account_id();
+        // let account_id = env::signer_account_id();
         // 遍历收到的卡片，过滤出creator等于contact的
         if let Some(recvcards_set) = self.card_recv.get(&account_id) {
             for card_id in recvcards_set.iter() {
@@ -387,8 +390,8 @@ impl BLCardService {
     }
 
     // 计算红包随机比例
-    fn random_amount(&self, total_amount: u64) -> u64 {
-        let u8_max_value: u64 = u8::max_value().into();
+    fn random_amount(&self, total_amount: u128) -> u128 {
+        let u8_max_value: u128 = u8::max_value().into();
         let block_length = total_amount / u8_max_value;
 
         let random_seed = env::random_seed();
@@ -501,24 +504,8 @@ mod tests {
     }
 
     #[test]
-    fn test_random() {
-        let context = get_context(vec![], false);
-        testing_env!(context);
-
-        // let random_seed = env::random_seed();
-        let random_seed = vec![1u8, 11u8, 34u8, 44u8, 100u8, 145u8, 223u8];
-        
-        let mut total = 0_u8;
-
-        for item in random_seed {
-            total = total.wrapping_add(item);
-        }
-
-        let u8_max_value: u8 = u8::max_value().into();
-        assert_eq!(46, total);
-        total = total.wrapping_mul(100);
-        // total = total.wrapping_div(u8_max_value);
-        assert_eq!(248, total);
-
+    fn test_cal() {
+        let init_num: u128 = 1234_u128;
+        assert_eq!(1234_u128, init_num * 1_000_000_000_000_000_000_u128);
     }
 }

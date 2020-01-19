@@ -63,8 +63,8 @@ pub struct SayHiCard {
     pub remaining_count: u64, // 剩余卡片数量, 即还能被接收的次数
     // 红包相关
     pub is_avg: bool,         // true代表平均红包, false代表随机红包
-    pub total: u64,           // 红包总金额
-    pub remaining_total: u64, // 剩余未领金额
+    pub total: u128,           // 红包总金额
+    pub remaining_total: u128, // 剩余未领金额
     // 链属性
     pub current_block: u64, // 卡片创建时块高
     pub duration: u64,      // 卡片超时块数
@@ -81,7 +81,7 @@ impl SayHiCard {
         target: Option<AccountID>,
         count: u64,
         is_avg: bool,
-        total: u64,
+        total: u128,
         current_block: u64,
         duration: u64,
     ) -> Self {
