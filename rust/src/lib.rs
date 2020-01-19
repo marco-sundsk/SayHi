@@ -35,9 +35,9 @@ pub struct BLCardService {
     card_recv: Map<AccountID, HashSet<CardID>>,
     card_scan_result: Map<CardID, HashMap<AccountID, u64>>,
 
-    // 证书相关
+    // Cert describe user's nature attributes
     certificates: Map<CertificateID, Certificate>,
-    certificate_created: Map<AccountID, Vec<CertificateID>>,
+    user_certificates: Map<AccountID, Vec<CertificateID>>,
 
     // contracts storage, each user has his own contracts list
     user_contacts: Map<AccountID, HashSet<AccountID>>,

@@ -108,18 +108,46 @@ impl SayHiCard {
 #[derive(Clone, Default, BorshDeserialize, BorshSerialize)]
 pub struct Certificate {
     pub id: CertificateID,
-    pub public_key: String,
+    pub owner: AccountID,
+    // used by private msg sender to cypher plain msg, which is going to be received by the owner.
+    pub public_key: String,  
+    // describe all contacts of the owner.
     pub contacts: HashSet<String>,
+    // reserved for future usage.
     pub other_attrs: String,
 }
 
 impl Certificate {
-    pub fn new(id: &str, public_key: &str, contacts: HashSet<String>, other_attrs: &str) -> Self {
+    pub fn new(id: &str, owner: &str, public_key: &str, other_attrs: &str) -> Self {
         Certificate {
             id: String::from(id),
+            owner: String::from(owner),
             public_key: String::from(public_key),
-            contacts: contacts,
+            contacts: HashSet::new(),
             other_attrs: String::from(other_attrs),
         }
+    }
+
+    // return true means the contact is a new one, otherwise false
+    pub fn add_contact(&mut self, contact: &AccountID) -> bool {
+        // todo: implement this fn.
+        true
+    }
+
+    // return true means the contact was in cert, otherwise false
+    pub fn del_contact(&mut self, contact: &AccountID) -> bool {
+        // todo: implement this fn.
+        true
+    }
+
+    // return the old one.
+    pub fn upd_pk(&mut self, pk: &str) -> String {
+        let rslt = self.public_key.to_string();
+        self.public_key = String::from(pk);
+        rslt
+    }
+
+    pub fn get_pk(&self) -> String {
+        self.public_key.to_string()
     }
 }
