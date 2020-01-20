@@ -63,8 +63,8 @@ pub struct SayHiCard {
     pub remaining_count: u64, // 剩余卡片数量, 即还能被接收的次数
     // 红包相关
     pub is_avg: bool,         // true代表平均红包, false代表随机红包
-    pub total: u64,           // 红包总金额
-    pub remaining_total: u64, // 剩余未领金额
+    pub total: u128,           // 红包总金额
+    pub remaining_total: u128, // 剩余未领金额
     // 链属性
     pub current_block: u64, // 卡片创建时块高
     pub duration: u64,      // 卡片超时块数
@@ -81,7 +81,7 @@ impl SayHiCard {
         target: Option<AccountID>,
         count: u64,
         is_avg: bool,
-        total: u64,
+        total: u128,
         current_block: u64,
         duration: u64,
     ) -> Self {
@@ -108,18 +108,46 @@ impl SayHiCard {
 #[derive(Clone, Default, BorshDeserialize, BorshSerialize)]
 pub struct Certificate {
     pub id: CertificateID,
-    pub public_key: String,
+    pub owner: AccountID,
+    // used by private msg sender to cypher plain msg, which is going to be received by the owner.
+    pub public_key: String,  
+    // describe all contacts of the owner.
     pub contacts: HashSet<String>,
+    // reserved for future usage.
     pub other_attrs: String,
 }
 
 impl Certificate {
-    pub fn new(id: &str, public_key: &str, contacts: HashSet<String>, other_attrs: &str) -> Self {
+    pub fn new(id: &str, owner: &str, public_key: &str, other_attrs: &str) -> Self {
         Certificate {
             id: String::from(id),
+            owner: String::from(owner),
             public_key: String::from(public_key),
-            contacts: contacts,
+            contacts: HashSet::new(),
             other_attrs: String::from(other_attrs),
         }
+    }
+
+    // return true means the contact is a new one, otherwise false
+    pub fn add_contact(&mut self, contact: &AccountID) -> bool {
+        // todo: implement this fn.
+        true
+    }
+
+    // return true means the contact was in cert, otherwise false
+    pub fn del_contact(&mut self, contact: &AccountID) -> bool {
+        // todo: implement this fn.
+        true
+    }
+
+    // return the old one.
+    pub fn upd_pk(&mut self, pk: &str) -> String {
+        let rslt = self.public_key.to_string();
+        self.public_key = String::from(pk);
+        rslt
+    }
+
+    pub fn get_pk(&self) -> String {
+        self.public_key.to_string()
     }
 }
